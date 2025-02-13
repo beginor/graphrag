@@ -46,7 +46,8 @@ async def test_local_search():
         'Multiple Paragraphs',
         '比目鱼直接实现了渔夫的妻子许下的哪些愿望，请给出一个列表？'
     ):
-        print(result, end='')
+        print(type(result))
+        print(result)
 
 
 if __name__ == '__main__':
