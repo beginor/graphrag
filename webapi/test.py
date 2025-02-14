@@ -29,4 +29,4 @@ async def test_local_search():
 
 
 if __name__ == '__main__':
-    asyncio.run(test_global_search())
+    asyncio.run(test_local_search())

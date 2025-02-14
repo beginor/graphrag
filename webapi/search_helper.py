@@ -29,12 +29,15 @@ def warp_to_openai_chunk(content: str, finish: bool = False) -> dict:
 async def do_global_search(root: str, query: str) -> AsyncGenerator[str, None]:
     config = load_config(Path(root))
 
+    communities = read_parquet(root + '/output/communities.parquet')
+    community_level = communities['level'].max()
+
     async for content in global_search_streaming(
         config=config,
         entities=read_parquet(root + '/output/entities.parquet'),
-        communities=read_parquet(root + '/output/communities.parquet'),
+        communities=communities,
         community_reports=read_parquet(root + '/output/community_reports.parquet'),
-        community_level=0,
+        community_level=community_level,
         dynamic_community_selection=True,
         response_type='Multiple Paragraphs',
         query=query
@@ -51,15 +54,18 @@ async def do_global_search(root: str, query: str) -> AsyncGenerator[str, None]:
 async def do_local_search(root: str, query: str) -> AsyncGenerator[str, None]:
     config = load_config(Path(root))
 
+    communities = read_parquet(root + '/output/communities.parquet')
+    community_level = communities['level'].max()
+
     async for content in local_search_streaming(
         config=config,
         entities=read_parquet(root + '/output/entities.parquet'),
-        communities=read_parquet(root + '/output/communities.parquet'),
+        communities=communities,
         community_reports=read_parquet(root + '/output/community_reports.parquet'),
         text_units=read_parquet(root + '/output/text_units.parquet'),
         relationships=read_parquet(root + '/output/relationships.parquet'),
         covariates=None,
-        community_level=0,
+        community_level=community_level,
         response_type='Multiple Paragraphs',
         query=query
     ):
