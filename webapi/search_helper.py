@@ -89,6 +89,31 @@ async def do_local_search(root: str, query: str) -> AsyncGenerator[str, None]:
     yield 'data: [DONE]\n\n'
 
 
+async def do_drift_search(root: str, query: str) -> AsyncGenerator[str, None]:
+    config = load_config(Path(root))
+
+    async for content in drift_search_streaming(
+        config=config,
+        entities=read_parquet(root + '/output/entities.parquet'),
+        communities=read_parquet(root + '/output/communities.parquet'),
+        community_reports=read_parquet(root + '/output/community_reports.parquet'),
+        text_units=read_parquet(root + '/output/text_units.parquet'),
+        relationships=read_parquet(root + '/output/relationships.parquet'),
+        community_level=COMMUNITY_LEVEL,
+        response_type='Multiple Paragraphs',
+        query=query
+    ):
+        if type(content) is str:
+            chunk = warp_to_openai_chunk(content)
+            yield f'data: {json.dumps(chunk)}\n\n'
+        else:
+            print(content)
+
+    end_chunk = warp_to_openai_chunk(content='', finish=True)
+    yield f'data: {json.dumps(end_chunk)}\n\n'
+    yield 'data: [DONE]\n\n'
+
+
 async def do_question_gen(root: str, question_history: list[str]) -> QuestionResult:
     config = load_config(Path(root))
     chat_model = config.models['default_chat_model']

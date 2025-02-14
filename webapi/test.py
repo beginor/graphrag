@@ -1,12 +1,11 @@
 import asyncio
 
-from .search_helper import do_global_search, do_local_search, do_question_gen
+from .search_helper import do_global_search, do_local_search, do_drift_search, do_question_gen
 
 
 root = 'ragtest/laws'
 
 async def test_global_search():
-
     async for result in do_global_search(
         root=root,
         query='中华人民共和国大气污染防治法概述'
@@ -15,10 +14,17 @@ async def test_global_search():
 
 
 async def test_local_search():
-
     async for result in do_local_search(
         root=root,
         query='什么是水资源？'
+    ):
+        print(result, end='')
+
+
+async def test_drift_search():
+    async for result in do_drift_search(
+        root='ragtest/grimm-stories',
+        query='比目鱼直接帮渔夫的妻子实现了哪些愿望'
     ):
         print(result, end='')
 
