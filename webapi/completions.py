@@ -1,41 +1,33 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import StreamingResponse
 
-from graphrag.api import global_search_streaming, local_search_streaming, drift_search_streaming
-from graphrag.config.load_config import load_config
-from pathlib import Path
-
-import pandas as pd
-
+from .search_helper import do_local_search, do_global_search
 
 router = APIRouter(
     prefix="",
     tags=["chat"]
 )
 
-root = 'ragtest/grimm-stories'
-
-config = load_config(
-    Path(root), 
-    Path(root + '/settings.yaml')
-)
+root = 'ragtest/laws'
 
 @router.post('/v1/chat/completions')
 async def completions(request: Request) -> StreamingResponse:
     dict = await request.json()
-    print(dict)
-    generator = local_search_streaming(
-        config,
-        pd.read_parquet(root + '/output/entities.parquet'),
-        pd.read_parquet(root + '/output/communities.parquet'),
-        pd.read_parquet(root + '/output/community_reports.parquet'),
-        pd.read_parquet(root + '/output/text_units.parquet'),
-        pd.read_parquet(root + '/output/relationships.parquet'),
-        None,
-        0,
-        'Multiple Paragraphs',
-        '比目鱼直接实现了渔夫的妻子许下的哪些愿望，请给出一个列表？'
-    )
+    model: str = dict['model'] # grimm-stories:local
+    search_method = model.split(':')[-1]
+    messages: list = dict['messages']
+    query = messages[-1]['content']
+
+    if search_method == '全局搜索':
+        generator = do_global_search(
+            root=root,
+            query= query if query else '当前知识库包含哪些环境法律法规？'
+        )
+    else:
+        generator = do_local_search(
+            root=root,
+            query= query if query else '什么是环保税？'
+        )
     return StreamingResponse(
         generator,
         headers={

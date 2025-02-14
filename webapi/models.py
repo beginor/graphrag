@@ -13,13 +13,13 @@ async def models():
         "object": "list",
         "data": [
             {
-                "id": "grimm-stories:global",
+                "id": "环境法规:全局搜索",
                 "object": "model",
                 "created": 1739352563,
                 "owned_by": "graphrag"
             },
             {
-                "id": "grimm-stories:local",
+                "id": "环境法规:局部搜索",
                 "object": "model",
                 "created": 1739352563,
                 "owned_by": "graphrag"
