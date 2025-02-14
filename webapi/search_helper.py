@@ -34,7 +34,7 @@ async def do_global_search(root: str, query: str) -> AsyncGenerator[str, None]:
         entities=read_parquet(root + '/output/entities.parquet'),
         communities=read_parquet(root + '/output/communities.parquet'),
         community_reports=read_parquet(root + '/output/community_reports.parquet'),
-        community_level=None,
+        community_level=0,
         dynamic_community_selection=True,
         response_type='Multiple Paragraphs',
         query=query
