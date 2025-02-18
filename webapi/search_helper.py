@@ -128,6 +128,15 @@ async def do_local_search_streaming(root: str, query: str) -> AsyncGenerator[str
         else:
             print(content)
 
+    candidates = await do_question_gen(root, [query])
+
+    more_trunk = warp_to_openai_streaming_chunk('\n\n可以提问更多相关问题吗？\n\n')
+    yield f'data: {json.dumps(more_trunk)}\n\n'
+
+    for question in candidates.response:
+        chunk = warp_to_openai_streaming_chunk(f'{question}\n')
+        yield f'data: {json.dumps(chunk)}\n\n'
+
     end_chunk = warp_to_openai_streaming_chunk(content='', finish=True)
     yield f'data: {json.dumps(end_chunk)}\n\n'
     yield 'data: [DONE]\n\n'
@@ -152,7 +161,7 @@ async def do_local_search(root: str, query: str):
 
     return result
 
-    
+
 async def do_drift_search(root: str, query: str) -> AsyncGenerator[str, None]:
     config = load_config(Path(root))
 
@@ -174,31 +183,6 @@ async def do_drift_search(root: str, query: str) -> AsyncGenerator[str, None]:
             print(content)
 
     end_chunk = warp_to_openai_streaming_chunk(content='', finish=True)
-    yield f'data: {json.dumps(end_chunk)}\n\n'
-    yield 'data: [DONE]\n\n'
-
-
-async def do_drift_search(root: str, query: str) -> AsyncGenerator[str, None]:
-    config = load_config(Path(root))
-
-    async for content in drift_search_streaming(
-        config=config,
-        entities=read_parquet(root + '/output/entities.parquet'),
-        communities=read_parquet(root + '/output/communities.parquet'),
-        community_reports=read_parquet(root + '/output/community_reports.parquet'),
-        text_units=read_parquet(root + '/output/text_units.parquet'),
-        relationships=read_parquet(root + '/output/relationships.parquet'),
-        community_level=COMMUNITY_LEVEL,
-        response_type='Multiple Paragraphs',
-        query=query
-    ):
-        if type(content) is str:
-            chunk = warp_to_openai_chunk(content)
-            yield f'data: {json.dumps(chunk)}\n\n'
-        else:
-            print(content)
-
-    end_chunk = warp_to_openai_chunk(content='', finish=True)
     yield f'data: {json.dumps(end_chunk)}\n\n'
     yield 'data: [DONE]\n\n'
 
