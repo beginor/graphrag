@@ -1,121 +1,94 @@
 
 -Goal-
 Given a text document that is potentially relevant to this activity and a list of entity types, identify all entities of those types from the text and all relationships among the identified entities.
- 
+
 -Steps-
 1. Identify all entities. For each identified entity, extract the following information:
 - entity_name: Name of the entity, capitalized
-- entity_type: One of the following types: [{entity_types}]
+- entity_type: One of the following types: [governmental_oversight, penalties_for_non_compliance, public_participation, air_quality_monitoring, noise_pollution_control, soil_management, water_resource_planning, administrative_review_procedures, pollution_discharge_standards]
 - entity_description: Comprehensive description of the entity's attributes and activities
 Format each entity as ("entity"{tuple_delimiter}<entity_name>{tuple_delimiter}<entity_type>{tuple_delimiter}<entity_description>)
- 
+
 2. From the entities identified in step 1, identify all pairs of (source_entity, target_entity) that are *clearly related* to each other.
 For each pair of related entities, extract the following information:
 - source_entity: name of the source entity, as identified in step 1
 - target_entity: name of the target entity, as identified in step 1
 - relationship_description: explanation as to why you think the source entity and the target entity are related to each other
-- relationship_strength: a numeric score indicating strength of the relationship between the source entity and target entity
- Format each relationship as ("relationship"{tuple_delimiter}<source_entity>{tuple_delimiter}<target_entity>{tuple_delimiter}<relationship_description>{tuple_delimiter}<relationship_strength>)
- 
-3. Return output in English as a single list of all the entities and relationships identified in steps 1 and 2. Use **{record_delimiter}** as the list delimiter.
- 
-4. When finished, output {completion_delimiter}
- 
-######################
+- relationship_strength: an integer score between 1 to 10, indicating strength of the relationship between the source entity and target entity
+Format each relationship as ("relationship"{tuple_delimiter}<source_entity>{tuple_delimiter}<target_entity>{tuple_delimiter}<relationship_description>{tuple_delimiter}<relationship_strength>)
+
+3. Return output in The primary language of the provided text is **Chinese (Simplified)**. The text appears to be legal or regulatory content related to environmental protection and administrative procedures in China. as a single list of all the entities and relationships identified in steps 1 and 2. Use **{record_delimiter}** as the list delimiter.
+
+4. If you have to translate into The primary language of the provided text is **Chinese (Simplified)**. The text appears to be legal or regulatory content related to environmental protection and administrative procedures in China., just translate the descriptions, nothing else!
+
+5. When finished, output {completion_delimiter}.
+
 -Examples-
 ######################
+
 Example 1:
-Entity_types: ORGANIZATION,PERSON
-Text:
-The Verdantis's Central Institution is scheduled to meet on Monday and Thursday, with the institution planning to release its latest policy decision on Thursday at 1:30 p.m. PDT, followed by a press conference where Central Institution Chair Martin Smith will take questions. Investors expect the Market Strategy Committee to hold its benchmark interest rate steady in a range of 3.5%-3.75%.
-######################
-Output:
-("entity"{tuple_delimiter}CENTRAL INSTITUTION{tuple_delimiter}ORGANIZATION{tuple_delimiter}The Central Institution is the Federal Reserve of Verdantis, which is setting interest rates on Monday and Thursday)
-{record_delimiter}
-("entity"{tuple_delimiter}MARTIN SMITH{tuple_delimiter}PERSON{tuple_delimiter}Martin Smith is the chair of the Central Institution)
-{record_delimiter}
-("entity"{tuple_delimiter}MARKET STRATEGY COMMITTEE{tuple_delimiter}ORGANIZATION{tuple_delimiter}The Central Institution committee makes key decisions about interest rates and the growth of Verdantis's money supply)
-{record_delimiter}
-("relationship"{tuple_delimiter}MARTIN SMITH{tuple_delimiter}CENTRAL INSTITUTION{tuple_delimiter}Martin Smith is the Chair of the Central Institution and will answer questions at a press conference{tuple_delimiter}9)
-{completion_delimiter}
 
-######################
+entity_types: [governmental_oversight, penalties_for_non_compliance, public_participation, air_quality_monitoring, noise_pollution_control, soil_management, water_resource_planning, administrative_review_procedures, pollution_discharge_standards]
+text:
+生的大气污染物进行监测，并向社会公布监测信息。
+
+## 第七章 法律责任
+
+### 第九十八条
+
+违反本法规定，以拒绝进入现场等方式拒不接受生态环境主管部门及其环境执法机构或者其他负有大气环境保护监督管理职责的部门的监督检查，或者在接受监督检查时弄虚作假的，由县级以上人民政府生态环境主管部门或者其他负有大气环境保护监督管理职责的部门责令改正，处二万元以上二十万元以下
+------------------------
+output:
+("entity"{tuple_delimiter}生态环境主管部门{tuple_delimiter}governmental_oversight{tuple_delimiter}负责监督和管理大气环境以及其他相关环保工作的政府部门)
+{record_delimiter}
+("entity"{tuple_delimiter}其他负有大气环境保护监督管理职责的部门{tuple_delimiter}governmental_oversight{tuple_delimiter}除了生态环境主管部门之外，还有其他政府机构也承担着大气环境保护监管的责任)
+{record_delimiter}
+("entity"{tuple_delimiter}拒绝进入现场等方式拒不接受监督检查{tuple_delimiter}penalties_for_non_compliance{tuple_delimiter}指企业或个人通过各种方式逃避政府部门的环境检查的行为)
+{record_delimiter}
+("entity"{tuple_delimiter}在接受监督检查时弄虚作假{tuple_delimiter}penalties_for_non_compliance{tuple_delimiter}在政府进行环保监督和检查过程中，提供虚假信息以掩盖违规行为)
+{record_delimiter}
+("entity"{tuple_delimiter}责令改正{tuple_delimiter}administrative_review_procedures{tuple_delimiter}政府部门要求违法者纠正其违法行为的行政措施)
+{record_delimiter}
+("entity"{tuple_delimiter}处二万元以上二十万元以下罚款{tuple_delimiter}penalties_for_non_compliance{tuple_delimiter}对违反环保法规的行为进行经济处罚，金额范围为2万至20万元人民币)
+{record_delimiter}
+("relationship"{tuple_delimiter}生态环境主管部门{tuple_delimiter}其他负有大气环境保护监督管理职责的部门{tuple_delimiter}两者共同负责监督和管理大气环境以及其他相关环保工作{tuple_delimiter}8)
+{record_delimiter}
+("relationship"{tuple_delimiter}拒绝进入现场等方式拒不接受监督检查{tuple_delimiter}责令改正{tuple_delimiter}当企业或个人采取逃避检查的行为时，政府部门会要求其改正{tuple_delimiter}7)
+{record_delimiter}
+("relationship"{tuple_delimiter}在接受监督检查时弄虚作假{tuple_delimiter}责令改正{tuple_delimiter}提供虚假信息以掩盖违规行为的企业或个人会被要求纠正错误{tuple_delimiter}7)
+{record_delimiter}
+("relationship"{tuple_delimiter}拒绝进入现场等方式拒不接受监督检查{tuple_delimiter}处二万元以上二十万元以下罚款{tuple_delimiter}逃避检查的行为将面临经济处罚{tuple_delimiter}8)
+{record_delimiter}
+("relationship"{tuple_delimiter}在接受监督检查时弄虚作假{tuple_delimiter}处二万元以上二十万元以下罚款{tuple_delimiter}提供虚假信息以掩盖违规行为的企业或个人将被罚款{tuple_delimiter}8)
+
+{completion_delimiter}
+#############################
+
+
 Example 2:
-Entity_types: ORGANIZATION
-Text:
-TechGlobal's (TG) stock skyrocketed in its opening day on the Global Exchange Thursday. But IPO experts warn that the semiconductor corporation's debut on the public markets isn't indicative of how other newly listed companies may perform.
 
-TechGlobal, a formerly public company, was taken private by Vision Holdings in 2014. The well-established chip designer says it powers 85% of premium smartphones.
-######################
-Output:
-("entity"{tuple_delimiter}TECHGLOBAL{tuple_delimiter}ORGANIZATION{tuple_delimiter}TechGlobal is a stock now listed on the Global Exchange which powers 85% of premium smartphones)
+entity_types: [governmental_oversight, penalties_for_non_compliance, public_participation, air_quality_monitoring, noise_pollution_control, soil_management, water_resource_planning, administrative_review_procedures, pollution_discharge_standards]
+text:
+动车排放检验机构定期对其进行排放检验。经检验合格的，方可上道路行驶。未经检验合格的，公安机关交通管理部门不得核发安全技术检验合格标志。
+
+县级以上地方人民政府生态环境主管部门可以在机动车集中停放地、维修地对在用机动车的大气污染物排放状况进行监督抽测；在不影响正常通行的情况下，可以通过遥感监测等技术手段对在道路上行驶的机动车的大气污染物排放状况进行监督抽测，公安机关
+------------------------
+output:
+("entity"{tuple_delimiter}动车排放检验机构{tuple_delimiter}governmental_oversight{tuple_delimiter}负责定期对动车进行排放检验，确保其符合大气污染排放标准)
 {record_delimiter}
-("entity"{tuple_delimiter}VISION HOLDINGS{tuple_delimiter}ORGANIZATION{tuple_delimiter}Vision Holdings is a firm that previously owned TechGlobal)
+("entity"{tuple_delimiter}公安机关交通管理部门{tuple_delimiter}governmental_oversight{tuple_delimiter}负责核发安全技术检验合格标志，只有经过排放检验合格的车辆才能获得此标志)
 {record_delimiter}
-("relationship"{tuple_delimiter}TECHGLOBAL{tuple_delimiter}VISION HOLDINGS{tuple_delimiter}Vision Holdings formerly owned TechGlobal from 2014 until present{tuple_delimiter}5)
+("entity"{tuple_delimiter}县级以上地方人民政府生态环境主管部门{tuple_delimiter}governmental_oversight{tuple_delimiter}有权在机动车集中停放地、维修地对大气污染物排放状况进行监督抽测，并可通过遥感监测等技术手段对道路上行驶的车辆进行监督)
+{record_delimiter}
+("relationship"{tuple_delimiter}动车排放检验机构{tuple_delimiter}县级以上地方人民政府生态环境主管部门{tuple_delimiter}两者都负责机动车的大气污染排放监管，但职责不同：前者定期检验，后者抽测和遥感监测{tuple_delimiter}7)
 {completion_delimiter}
+#############################
 
-######################
-Example 3:
-Entity_types: ORGANIZATION,GEO,PERSON
-Text:
-Five Aurelians jailed for 8 years in Firuzabad and widely regarded as hostages are on their way home to Aurelia.
 
-The swap orchestrated by Quintara was finalized when $8bn of Firuzi funds were transferred to financial institutions in Krohaara, the capital of Quintara.
 
-The exchange initiated in Firuzabad's capital, Tiruzia, led to the four men and one woman, who are also Firuzi nationals, boarding a chartered flight to Krohaara.
-
-They were welcomed by senior Aurelian officials and are now on their way to Aurelia's capital, Cashion.
-
-The Aurelians include 39-year-old businessman Samuel Namara, who has been held in Tiruzia's Alhamia Prison, as well as journalist Durke Bataglani, 59, and environmentalist Meggie Tazbah, 53, who also holds Bratinas nationality.
-######################
-Output:
-("entity"{tuple_delimiter}FIRUZABAD{tuple_delimiter}GEO{tuple_delimiter}Firuzabad held Aurelians as hostages)
-{record_delimiter}
-("entity"{tuple_delimiter}AURELIA{tuple_delimiter}GEO{tuple_delimiter}Country seeking to release hostages)
-{record_delimiter}
-("entity"{tuple_delimiter}QUINTARA{tuple_delimiter}GEO{tuple_delimiter}Country that negotiated a swap of money in exchange for hostages)
-{record_delimiter}
-{record_delimiter}
-("entity"{tuple_delimiter}TIRUZIA{tuple_delimiter}GEO{tuple_delimiter}Capital of Firuzabad where the Aurelians were being held)
-{record_delimiter}
-("entity"{tuple_delimiter}KROHAARA{tuple_delimiter}GEO{tuple_delimiter}Capital city in Quintara)
-{record_delimiter}
-("entity"{tuple_delimiter}CASHION{tuple_delimiter}GEO{tuple_delimiter}Capital city in Aurelia)
-{record_delimiter}
-("entity"{tuple_delimiter}SAMUEL NAMARA{tuple_delimiter}PERSON{tuple_delimiter}Aurelian who spent time in Tiruzia's Alhamia Prison)
-{record_delimiter}
-("entity"{tuple_delimiter}ALHAMIA PRISON{tuple_delimiter}GEO{tuple_delimiter}Prison in Tiruzia)
-{record_delimiter}
-("entity"{tuple_delimiter}DURKE BATAGLANI{tuple_delimiter}PERSON{tuple_delimiter}Aurelian journalist who was held hostage)
-{record_delimiter}
-("entity"{tuple_delimiter}MEGGIE TAZBAH{tuple_delimiter}PERSON{tuple_delimiter}Bratinas national and environmentalist who was held hostage)
-{record_delimiter}
-("relationship"{tuple_delimiter}FIRUZABAD{tuple_delimiter}AURELIA{tuple_delimiter}Firuzabad negotiated a hostage exchange with Aurelia{tuple_delimiter}2)
-{record_delimiter}
-("relationship"{tuple_delimiter}QUINTARA{tuple_delimiter}AURELIA{tuple_delimiter}Quintara brokered the hostage exchange between Firuzabad and Aurelia{tuple_delimiter}2)
-{record_delimiter}
-("relationship"{tuple_delimiter}QUINTARA{tuple_delimiter}FIRUZABAD{tuple_delimiter}Quintara brokered the hostage exchange between Firuzabad and Aurelia{tuple_delimiter}2)
-{record_delimiter}
-("relationship"{tuple_delimiter}SAMUEL NAMARA{tuple_delimiter}ALHAMIA PRISON{tuple_delimiter}Samuel Namara was a prisoner at Alhamia prison{tuple_delimiter}8)
-{record_delimiter}
-("relationship"{tuple_delimiter}SAMUEL NAMARA{tuple_delimiter}MEGGIE TAZBAH{tuple_delimiter}Samuel Namara and Meggie Tazbah were exchanged in the same hostage release{tuple_delimiter}2)
-{record_delimiter}
-("relationship"{tuple_delimiter}SAMUEL NAMARA{tuple_delimiter}DURKE BATAGLANI{tuple_delimiter}Samuel Namara and Durke Bataglani were exchanged in the same hostage release{tuple_delimiter}2)
-{record_delimiter}
-("relationship"{tuple_delimiter}MEGGIE TAZBAH{tuple_delimiter}DURKE BATAGLANI{tuple_delimiter}Meggie Tazbah and Durke Bataglani were exchanged in the same hostage release{tuple_delimiter}2)
-{record_delimiter}
-("relationship"{tuple_delimiter}SAMUEL NAMARA{tuple_delimiter}FIRUZABAD{tuple_delimiter}Samuel Namara was a hostage in Firuzabad{tuple_delimiter}2)
-{record_delimiter}
-("relationship"{tuple_delimiter}MEGGIE TAZBAH{tuple_delimiter}FIRUZABAD{tuple_delimiter}Meggie Tazbah was a hostage in Firuzabad{tuple_delimiter}2)
-{record_delimiter}
-("relationship"{tuple_delimiter}DURKE BATAGLANI{tuple_delimiter}FIRUZABAD{tuple_delimiter}Durke Bataglani was a hostage in Firuzabad{tuple_delimiter}2)
-{completion_delimiter}
-
-######################
 -Real Data-
 ######################
-Entity_types: {entity_types}
-Text: {input_text}
+entity_types: [governmental_oversight, penalties_for_non_compliance, public_participation, air_quality_monitoring, noise_pollution_control, soil_management, water_resource_planning, administrative_review_procedures, pollution_discharge_standards]
+text: {input_text}
 ######################
-Output:
+output:
