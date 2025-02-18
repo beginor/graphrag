@@ -1,3 +1,4 @@
+你是环境法律与政策方面的专家。你擅长分析监管框架及其在环境保护各个领域的实施情况。你善于帮助人们理解政府机构、私营实体和公众利益相关者之间在执行空气质量、水资源、土壤管理以及噪声污染控制等相关法规时的复杂关系。
 
 -Goal-
 Given a text document that is potentially relevant to this activity and a list of entity types, identify all entities of those types from the text and all relationships among the identified entities.
@@ -5,7 +6,7 @@ Given a text document that is potentially relevant to this activity and a list o
 -Steps-
 1. Identify all entities. For each identified entity, extract the following information:
 - entity_name: Name of the entity, capitalized
-- entity_type: One of the following types: [governmental_oversight, penalties_for_non_compliance, public_participation, air_quality_monitoring, noise_pollution_control, soil_management, water_resource_planning, administrative_review_procedures, pollution_discharge_standards]
+- entity_type: One of the following types: [主体（机构）,客体（对象）,行为,规范/标准,条件/状态,位置]
 - entity_description: Comprehensive description of the entity's attributes and activities
 Format each entity as ("entity"{tuple_delimiter}<entity_name>{tuple_delimiter}<entity_type>{tuple_delimiter}<entity_description>)
 
@@ -17,9 +18,10 @@ For each pair of related entities, extract the following information:
 - relationship_strength: an integer score between 1 to 10, indicating strength of the relationship between the source entity and target entity
 Format each relationship as ("relationship"{tuple_delimiter}<source_entity>{tuple_delimiter}<target_entity>{tuple_delimiter}<relationship_description>{tuple_delimiter}<relationship_strength>)
 
-3. Return output in The primary language of the provided text is **Chinese (Simplified)**. The text appears to be legal or regulatory content related to environmental protection and administrative procedures in China. as a single list of all the entities and relationships identified in steps 1 and 2. Use **{record_delimiter}** as the list delimiter.
+3. Return output in The primary language of the provided text is **简体中文**. The text appears to be legal or regulatory content related to environmental protection and administrative procedures in China. as a single list of all the entities and relationships identified in steps 1 and 2. Use **
+{record_delimiter}** as the list delimiter.
 
-4. If you have to translate into The primary language of the provided text is **Chinese (Simplified)**. The text appears to be legal or regulatory content related to environmental protection and administrative procedures in China., just translate the descriptions, nothing else!
+4. If you have to translate into The primary language of the provided text is **简体中文**. The text appears to be legal or regulatory content related to environmental protection and administrative procedures in China., just translate the descriptions, nothing else!
 
 5. When finished, output {completion_delimiter}.
 
@@ -28,67 +30,165 @@ Format each relationship as ("relationship"{tuple_delimiter}<source_entity>{tupl
 
 Example 1:
 
-entity_types: [governmental_oversight, penalties_for_non_compliance, public_participation, air_quality_monitoring, noise_pollution_control, soil_management, water_resource_planning, administrative_review_procedures, pollution_discharge_standards]
+entity_types: [主体（机构）,客体（对象）,行为,规范/标准,条件/状态,位置]
 text:
-生的大气污染物进行监测，并向社会公布监测信息。
-
-## 第七章 法律责任
-
-### 第九十八条
-
-违反本法规定，以拒绝进入现场等方式拒不接受生态环境主管部门及其环境执法机构或者其他负有大气环境保护监督管理职责的部门的监督检查，或者在接受监督检查时弄虚作假的，由县级以上人民政府生态环境主管部门或者其他负有大气环境保护监督管理职责的部门责令改正，处二万元以上二十万元以下
+国务院生态环境主管部门会同国务院有关部门，按照国务院的规定，对省、自治区、直辖市大气环境质量改善目标、大气污染防治重点任务完成情况进行考核。省、自治区、直辖市人民政府制定考核办法，对本行政区域内地方大气环境质量改善目标、大气污染防治重点任务完成情况实施考核。考核结果应当向社会公开。
 ------------------------
 output:
-("entity"{tuple_delimiter}生态环境主管部门{tuple_delimiter}governmental_oversight{tuple_delimiter}负责监督和管理大气环境以及其他相关环保工作的政府部门)
+("entity"{tuple_delimiter}国务院生态环境主管部门{tuple_delimiter}主体（机构）{tuple_delimiter}负责协调和管理全国范围内的环境保护工作，特别是大气污染控制方面的政策制定与执行。)
 {record_delimiter}
-("entity"{tuple_delimiter}其他负有大气环境保护监督管理职责的部门{tuple_delimiter}governmental_oversight{tuple_delimiter}除了生态环境主管部门之外，还有其他政府机构也承担着大气环境保护监管的责任)
+("entity"{tuple_delimiter}国务院有关部门{tuple_delimiter}主体（机构）{tuple_delimiter}与国务院生态环境主管部门合作，共同参与大气环境保护的相关工作。)
 {record_delimiter}
-("entity"{tuple_delimiter}拒绝进入现场等方式拒不接受监督检查{tuple_delimiter}penalties_for_non_compliance{tuple_delimiter}指企业或个人通过各种方式逃避政府部门的环境检查的行为)
+("entity"{tuple_delimiter}国务院{tuple_delimiter}主体（机构）{tuple_delimiter}最高国家行政机关，规定大气环境质量改善目标及重点任务完成情况的考核框架。)
 {record_delimiter}
-("entity"{tuple_delimiter}在接受监督检查时弄虚作假{tuple_delimiter}penalties_for_non_compliance{tuple_delimiter}在政府进行环保监督和检查过程中，提供虚假信息以掩盖违规行为)
+("entity"{tuple_delimiter}省、自治区、直辖市{tuple_delimiter}主体（机构）{tuple_delimiter}地方政府单位，负责在其管辖范围内实施大气环境质量改善措施和重点任务。)
 {record_delimiter}
-("entity"{tuple_delimiter}责令改正{tuple_delimiter}administrative_review_procedures{tuple_delimiter}政府部门要求违法者纠正其违法行为的行政措施)
+("entity"{tuple_delimiter}大气环境质量改善目标{tuple_delimiter}客体（对象）{tuple_delimiter}设定的大气环境质量提升的具体指标。)
 {record_delimiter}
-("entity"{tuple_delimiter}处二万元以上二十万元以下罚款{tuple_delimiter}penalties_for_non_compliance{tuple_delimiter}对违反环保法规的行为进行经济处罚，金额范围为2万至20万元人民币)
+("entity"{tuple_delimiter}大气污染防治重点任务{tuple_delimiter}客体（对象）{tuple_delimiter}针对大气污染问题需要优先解决的任务清单。)
 {record_delimiter}
-("relationship"{tuple_delimiter}生态环境主管部门{tuple_delimiter}其他负有大气环境保护监督管理职责的部门{tuple_delimiter}两者共同负责监督和管理大气环境以及其他相关环保工作{tuple_delimiter}8)
+("entity"{tuple_delimiter}考核{tuple_delimiter}行为{tuple_delimiter}评估和检查地方政府在大气环境保护方面的工作成效。)
 {record_delimiter}
-("relationship"{tuple_delimiter}拒绝进入现场等方式拒不接受监督检查{tuple_delimiter}责令改正{tuple_delimiter}当企业或个人采取逃避检查的行为时，政府部门会要求其改正{tuple_delimiter}7)
+("entity"{tuple_delimiter}考核办法{tuple_delimiter}规范/标准{tuple_delimiter}用于评价地方政府大气环境质量改善目标完成情况的具体方法和标准。)
 {record_delimiter}
-("relationship"{tuple_delimiter}在接受监督检查时弄虚作假{tuple_delimiter}责令改正{tuple_delimiter}提供虚假信息以掩盖违规行为的企业或个人会被要求纠正错误{tuple_delimiter}7)
+("entity"{tuple_delimiter}社会{tuple_delimiter}位置{tuple_delimiter}公众领域，指考核结果需要在此公开以增加透明度。)
 {record_delimiter}
-("relationship"{tuple_delimiter}拒绝进入现场等方式拒不接受监督检查{tuple_delimiter}处二万元以上二十万元以下罚款{tuple_delimiter}逃避检查的行为将面临经济处罚{tuple_delimiter}8)
+("relationship"{tuple_delimiter}国务院生态环境主管部门{tuple_delimiter}国务院有关部门{tuple_delimiter}国务院生态环境主管部门与国务院有关部门合作执行大气污染防治政策{tuple_delimiter}9)
 {record_delimiter}
-("relationship"{tuple_delimiter}在接受监督检查时弄虚作假{tuple_delimiter}处二万元以上二十万元以下罚款{tuple_delimiter}提供虚假信息以掩盖违规行为的企业或个人将被罚款{tuple_delimiter}8)
-
+("relationship"{tuple_delimiter}国务院{tuple_delimiter}国务院生态环境主管部门{tuple_delimiter}国务院授权生态环境主管部门进行大气环境质量考核{tuple_delimiter}9)
+{record_delimiter}
+("relationship"{tuple_delimiter}国务院{tuple_delimiter}省、自治区、直辖市{tuple_delimiter}国务院规定省级政府大气环境质量改善目标的考核要求{tuple_delimiter}9)
+{record_delimiter}
+("relationship"{tuple_delimiter}国务院生态环境主管部门{tuple_delimiter}省、自治区、直辖市{tuple_delimiter}国务院生态环境主管部门对省级政府进行大气环境质量考核{tuple_delimiter}9)
+{record_delimiter}
+("relationship"{tuple_delimiter}省、自治区、直辖市{tuple_delimiter}考核办法{tuple_delimiter}省级政府根据考核办法对其行政区域内的大气环境质量进行考核{tuple_delimiter}8)
+{record_delimiter}
+("relationship"{tuple_delimiter}省、自治区、直辖市{tuple_delimiter}社会{tuple_delimiter}省级政府需向公众公布其大气环境质量考核的结果{tuple_delimiter}7)
+{record_delimiter}
+("relationship"{tuple_delimiter}考核{tuple_delimiter}大气环境质量改善目标{tuple_delimiter}考核过程涉及对大气环境质量改善目标完成情况的审查{tuple_delimiter}10)
+{record_delimiter}
+("relationship"{tuple_delimiter}考核{tuple_delimiter}大气污染防治重点任务{tuple_delimiter}考核过程包括对大气污染防治重点任务完成情况的评估{tuple_delimiter}10)
 {completion_delimiter}
 #############################
 
 
 Example 2:
 
-entity_types: [governmental_oversight, penalties_for_non_compliance, public_participation, air_quality_monitoring, noise_pollution_control, soil_management, water_resource_planning, administrative_review_procedures, pollution_discharge_standards]
+entity_types: [主体（机构）,客体（对象）,行为,规范/标准,条件/状态,位置]
 text:
-动车排放检验机构定期对其进行排放检验。经检验合格的，方可上道路行驶。未经检验合格的，公安机关交通管理部门不得核发安全技术检验合格标志。
-
-县级以上地方人民政府生态环境主管部门可以在机动车集中停放地、维修地对在用机动车的大气污染物排放状况进行监督抽测；在不影响正常通行的情况下，可以通过遥感监测等技术手段对在道路上行驶的机动车的大气污染物排放状况进行监督抽测，公安机关
+在用机动车应当按照国家或者地方的有关规定，由机动车排放检验机构定期对其进行排放检验。经检验合格的，方可上道路行驶。未经检验合格的，公安机关交通管理部门不得核发安全技术检验合格标志。
+县级以上地方人民政府生态环境主管部门可以在机动车集中停放地、维修地对在用机动车的大气污染物排放状况进行监督抽测；在不影响正常通行的情况下，可以通过遥感监测等技术手段对在道路上行驶的机动车的大气污染物排放状况进行监督抽测，公安机关交通管理部门予以配合。
 ------------------------
 output:
-("entity"{tuple_delimiter}动车排放检验机构{tuple_delimiter}governmental_oversight{tuple_delimiter}负责定期对动车进行排放检验，确保其符合大气污染排放标准)
+("entity"{tuple_delimiter}在用机动车{tuple_delimiter}客体（对象）{tuple_delimiter}已经在使用的机动车辆，需定期接受排放检验。)
 {record_delimiter}
-("entity"{tuple_delimiter}公安机关交通管理部门{tuple_delimiter}governmental_oversight{tuple_delimiter}负责核发安全技术检验合格标志，只有经过排放检验合格的车辆才能获得此标志)
+("entity"{tuple_delimiter}国家或者地方的有关规定{tuple_delimiter}规范/标准{tuple_delimiter}关于在用机动车排放检验的法律或地方性规定。)
 {record_delimiter}
-("entity"{tuple_delimiter}县级以上地方人民政府生态环境主管部门{tuple_delimiter}governmental_oversight{tuple_delimiter}有权在机动车集中停放地、维修地对大气污染物排放状况进行监督抽测，并可通过遥感监测等技术手段对道路上行驶的车辆进行监督)
+("entity"{tuple_delimiter}机动车排放检验机构{tuple_delimiter}主体（机构）{tuple_delimiter}负责对在用机动车进行排放检验的专业机构。)
 {record_delimiter}
-("relationship"{tuple_delimiter}动车排放检验机构{tuple_delimiter}县级以上地方人民政府生态环境主管部门{tuple_delimiter}两者都负责机动车的大气污染排放监管，但职责不同：前者定期检验，后者抽测和遥感监测{tuple_delimiter}7)
+("entity"{tuple_delimiter}排放检验{tuple_delimiter}行为{tuple_delimiter}定期对在用机动车进行的大气污染物排放测试。)
+{record_delimiter}
+("entity""{tuple_delimiter}"经检验合格{tuple_delimiter}条件/状态{tuple_delimiter}机动车通过排放检验达到合格标准的状态。)
+{record_delimiter}
+("entity"{tuple_delimiter}上道路行驶{tuple_delimiter}行为{tuple_delimiter}机动车在公路上行驶的行为。)
+{record_delimiter}
+("entity"{tuple_delimiter}公安机关交通管理部门{tuple_delimiter}主体（机构）{tuple_delimiter}负责道路交通安全管理的政府部门，包括发放安全技术检验合格标志。)
+{record_delimiter}
+("entity"{tuple_delimiter}安全技术检验合格标志{tuple_delimiter}客体（对象）{tuple_delimiter}证明机动车符合安全技术标准的标志。)
+{record_delimiter}
+("entity"{tuple_delimiter}县级以上地方人民政府生态环境主管部门{tuple_delimiter}主体（机构）{tuple_delimiter}负责监督和管理地方大气污染控制工作的政府部门。)
+{record_delimiter}
+("entity"{tuple_delimiter}机动车集中停放地、维修地{tuple_delimiter}位置{tuple_delimiter}特定地点，如停车场或维修站，在这些地方可以对在用机动车进行监督抽测。)
+{record_delimiter}
+("entity"{tuple_delimiter}监督抽测{tuple_delimiter}行为{tuple_delimiter}对在用机动车的大气污染物排放状况进行随机检测。)
+{record_delimiter}
+("entity"{tuple_delimiter}遥感监测{tuple_delimiter}行为{tuple_delimiter}利用遥感技术手段进行的大气污染物排放状况监测。)
+{record_delimiter}
+("entity"{tuple_delimiter}道路上行驶的机动车{tuple_delimiter}客体（对象）{tuple_delimiter}正在公路上行驶的机动车辆，可能是监督抽测的对象。)
+{record_delimiter}
+("entity"{tuple_delimiter}大气污染物排放状况{tuple_delimiter}客体（对象）{tuple_delimiter}机动车排放到大气中的污染物水平及其状况。)
+{record_delimiter}
+("relationship"{tuple_delimiter}在用机动车{tuple_delimiter}机动车排放检验机构{tuple_delimiter}在用机动车需定期接受由机动车排放检验机构进行的排放检验{tuple_delimiter}9)
+{record_delimiter}
+("relationship"{tuple_delimiter}国家或者地方的有关规定{tuple_delimiter}机动车排放检验机构{tuple_delimiter}规定了机动车排放检验的标准和程序{tuple_delimiter}8)
+{record_delimiter}
+("relationship"{tuple_delimiter}经检验合格{tuple_delimiter}上道路行驶{tuple_delimiter}只有经检验合格的在用机动车才能上道路行驶{tuple_delimiter}10)
+{record_delimiter}
+("relationship"{tuple_delimiter}经检验合格{tuple_delimiter}公安机关交通管理部门{tuple_delimiter}公安机关交通管理部门基于检验合格的结果发放安全技术检验合格标志{tuple_delimiter}9)
+{record_delimiter}
+("relationship"{tuple_delimiter}县级以上地方人民政府生态环境主管部门{tuple_delimiter}机动车集中停放地、维修地{tuple_delimiter}生态环境主管部门可以在这些地点对在用机动车进行监督抽测{tuple_delimiter}8)
+{record_delimiter}
+("relationship"{tuple_delimiter}县级以上地方人民政府生态环境主管部门{tuple_delimiter}公安机关交通管理部门{tuple_delimiter}生态环境主管部门进行监督抽测时，公安机关交通管理部门应予以配合{tuple_delimiter}8)
+{record_delimiter}
+("relationship"{tuple_delimiter}公安机关交通管理部门{tuple_delimiter}安全技术检验合格标志{tuple_delimiter}公安机关交通管理部门负责核发安全技术检验合格标志{tuple_delimiter}9)
+{record_delimiter}
+("relationship"{tuple_delimiter}监督抽测{tuple_delimiter}大气污染物排放状况{tuple_delimiter}监督抽测旨在检测在用机动车的大气污染物排放状况{tuple_delimiter}10)
+{record_delimiter}
+("relationship"{tuple_delimiter}遥感监测{tuple_delimiter}道路上行驶的机动车{tuple_delimiter}遥感监测技术用于监控道路上行驶的机动车的大气污染物排放状况{tuple_delimiter}10)
 {completion_delimiter}
 #############################
-
+示例 3:
+实体类型: [主体（机构）,客体（对象）,行为,规范/标准,条件/状态,位置]
+文本:
+违反本法规定，生产超过污染物排放标准的机动车、非道路移动机械的，由省级以上人民政府生态环境主管部门责令改正，没收违法所得，并处货值金额一倍以上三倍以下的罚款，没收销毁无法达到污染物排放标准的机动车、非道路移动机械；拒不改正的，责令停产整治，并由国务院机动车生产主管部门责令停止生产该车型。
+违反本法规定，机动车、非道路移动机械生产企业对发动机、污染控制装置弄虚作假、以次充好，冒充排放检验合格产品出厂销售的，由省级以上人民政府生态环境主管部门责令停产整治，没收违法所得，并处货值金额一倍以上三倍以下的罚款，没收销毁无法达到污染物排放标准的机动车、非道路移动机械，并由国务院机动车生产主管部门责令停止生产该车型。
+######################
+输出结果:
+("entity"{tuple_delimiter}本法{tuple_delimiter}规范/标准{tuple_delimiter}法律规定，禁止生产超过污染物排放标准的机动车和非道路移动机械。)
+{record_delimiter}
+("entity"{tuple_delimiter}生产超过污染物排放标准的机动车、非道路移动机械{tuple_delimiter}行为{tuple_delimiter}制造不符合污染物排放标准的机动车和非道路移动机械。)
+{record_delimiter}
+("entity"{tuple_delimiter}省级以上人民政府生态环境主管部门{tuple_delimiter}主体（机构）{tuple_delimiter}具有执法权力的地方政府环保部门，可对违法行为采取措施。)
+{record_delimiter}
+("entity"{tuple_delimiter}责令改正{tuple_delimiter}行为{tuple_delimiter}要求违法者停止违法行为并采取纠正措施。)
+{record_delimiter}
+("entity"{tuple_delimiter}没收违法所得{tuple_delimiter}行为{tuple_delimiter}没收因违法行为而获得的非法收入。)
+{record_delimiter}
+("entity"{tuple_delimiter}货值金额一倍以上三倍以下的罚款{tuple_delimiter}行为{tuple_delimiter}对违法者处以相当于货物价值一至三倍的罚款。)
+{record_delimiter}
+("entity"{tuple_delimiter}没收销毁无法达到污染物排放标准的机动车、非道路移动机械{tuple_delimiter}行为{tuple_delimiter}没收并销毁不符合污染物排放标准的车辆。)
+{record_delimiter}
+("entity"{tuple_delimiter}拒不改正{tuple_delimiter}条件/状态{tuple_delimiter}企业拒绝采取措施纠正违法行为的状态。)
+{record_delimiter}
+("entity"{tuple_delimiter}责令停产整治{tuple_delimiter}行为{tuple_delimiter}命令企业停止生产活动直至整改完成。)
+{record_delimiter}
+("entity"{tuple_delimiter}国务院机动车生产主管部门{tuple_delimiter}主体（机构）{tuple_delimiter}国家级主管机动车生产的政府部门，有权命令停止生产不合格车型。)
+{record_delimiter}
+("entity"{tuple_delimiter}停止生产该车型{tuple_delimiter}行为{tuple_delimiter}命令制造商停止生产特定型号的不合格车辆。)
+{record_delimiter}
+("entity"{tuple_delimiter}机动车、非道路移动机械生产企业{tuple_delimiter}主体（机构）{tuple_delimiter}生产和销售机动车及非道路移动机械的企业。)
+{record_delimiter}
+("entity"{tuple_delimiter}对发动机、污染控制装置弄虚作假、以次充好，冒充排放检验合格产品出厂销售{tuple_delimiter}行为{tuple_delimiter}企业在生产过程中故意伪造发动机或污染控制装置的信息，使不合格产品通过排放检验。)
+{record_delimiter}
+("entity"{tuple_delimiter}发动机、污染控制装置{tuple_delimiter}客体（对象）{tuple_delimiter}机动车和非道路移动机械的关键部件，影响污染物排放水平。)
+{record_delimiter}
+("entity"{tuple_delimiter}排放检验合格产品{tuple_delimiter}客体（对象）{tuple_delimiter}经过正式排放检验并被认定为合格的产品。)
+{record_delimiter}
+("relationship"{tuple_delimiter}本法{tuple_delimiter}省级以上人民政府生态环境主管部门{tuple_delimiter}省级以上人民政府生态环境主管部门依据本法对违法行为进行处罚{tuple_delimiter}9)
+{record_delimiter}
+("relationship"{tuple_delimiter}生产超过污染物排放标准的机动车、非道路移动机械{tuple_delimiter}省级以上人民政府生态环境主管部门{tuple_delimiter}省级以上人民政府生态环境主管部门对违法生产行为进行处罚{tuple_delimiter}9)
+{record_delimiter}
+("relationship"{tuple_delimiter}省级以上人民政府生态环境主管部门{tuple_delimiter}货值金额一倍以上三倍以下的罚款{tuple_delimiter}省级以上人民政府生态环境主管部门对违法者处以相应罚款{tuple_delimiter}9)
+{record_delimiter}
+("relationship"{tuple_delimiter}省级以上人民政府生态环境主管部门{tuple_delimiter}国务院机动车生产主管部门{tuple_delimiter}省级以上人民政府生态环境主管部门与国务院机动车生产主管部门协作处理违法行为{tuple_delimiter}8)
+{record_delimiter}
+("relationship"{tuple_delimiter}省级以上人民政府生态环境主管部门{tuple_delimiter}没收销毁无法达到污染物排放标准的机动车、非道路移动机械{tuple_delimiter}省级以上人民政府生态环境主管部门对不合格产品进行没收销毁{tuple_delimiter}9)
+{record_delimiter}
+("relationship"{tuple_delimiter}拒不改正{tuple_delimiter}责令停产整治{tuple_delimiter}若企业拒不改正，则被责令停产整治{tuple_delimiter}10)
+{record_delimiter}
+("relationship"{tuple_delimiter}省级以上人民政府生态环境主管部门{tuple_delimiter}责令停产整治{tuple_delimiter}省级以上人民政府生态环境主管部门有权下令停产整治{tuple_delimiter}9)
+{record_delimiter}
+("relationship"{tuple_delimiter}国务院机动车生产主管部门{tuple_delimiter}停止生产该车型{tuple_delimiter}国务院机动车生产主管部门有权命令停止生产不合格车型{tuple_delimiter}9)
+{record_delimiter}
+("relationship"{tuple_delimiter}机动车、非道路移动机械生产企业{tuple_delimiter}省级以上人民政府生态环境主管部门{tuple_delimiter}省级以上人民政府生态环境主管部门对违规生产企业采取处罚措施{tuple_delimiter}9)
+{record_delimiter}
+("relationship"{tuple_delimiter}对发动机、污染控制装置弄虚作假、以次充好，冒充排放检验合格产品出厂销售{tuple_delimiter}省级以上人民政府生态环境主管部门{tuple_delimiter}省级以上人民政府生态环境主管部门对欺诈行为进行处罚{tuple_delimiter}9)
+{completion_delimiter}
 
 
 -Real Data-
 ######################
-entity_types: [governmental_oversight, penalties_for_non_compliance, public_participation, air_quality_monitoring, noise_pollution_control, soil_management, water_resource_planning, administrative_review_procedures, pollution_discharge_standards]
+entity_types: [主体（机构）,客体（对象）,行为,规范/标准,条件/状态,位置]
 text: {input_text}
 ######################
 output:
