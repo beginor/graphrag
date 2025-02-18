@@ -1,29 +1,34 @@
+import datetime
 from fastapi import APIRouter
+
+from .config import knowledge_base_models
 
 
 router = APIRouter(
     prefix="",
-    tags=["models"]
+    tags=["openqi"]
 )
 
 
 @router.get("/v1/models")
-async def models():
+def models():
+    data = []
+    for kb in knowledge_base_models:
+        data.append({
+            'object': 'model',
+            'id': f'{kb.title}:全局搜索',
+            'created': int(datetime.datetime.now().timestamp()),
+            'owned_by': 'graphrag'
+        })
+        data.append({
+            'object': 'model',
+            'id': f'{kb.title}:局部搜索',
+            'created': int(datetime.datetime.now().timestamp()),
+            'owned_by': 'graphrag'
+        })
+
     return {
         "object": "list",
-        "data": [
-            {
-                "id": "环境法规:全局搜索",
-                "object": "model",
-                "created": 1739352563,
-                "owned_by": "graphrag"
-            },
-            {
-                "id": "环境法规:局部搜索",
-                "object": "model",
-                "created": 1739352563,
-                "owned_by": "graphrag"
-            }
-        ]
+        "data": data
     }
 
