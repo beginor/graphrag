@@ -2,7 +2,10 @@ from typing import AsyncGenerator
 import json
 import datetime
 
-from graphrag.api import global_search_streaming, local_search_streaming, drift_search_streaming
+import tiktoken
+
+from graphrag.api import global_search_streaming, local_search_streaming, global_search, local_search
+from graphrag.api.query import drift_search_streaming, drift_search_streaming
 from graphrag.query.context_builder.entity_extraction import EntityVectorStoreKey
 from graphrag.query.indexer_adapters import read_indexer_entities, read_indexer_text_units, read_indexer_reports, \
     read_indexer_relationships
@@ -15,13 +18,9 @@ from graphrag.vector_stores.lancedb import LanceDBVectorStore
 
 from pathlib import Path
 from pandas import read_parquet
-import tiktoken
 
 
-COMMUNITY_LEVEL = 2
-
-
-def warp_to_openai_chunk(content: str, finish: bool = False) -> dict:
+def warp_to_openai_streaming_chunk(content: str, finish: bool = False) -> dict:
     choice = {
         "finish_reason": "stop" if finish else None,
         "index": 0,
@@ -39,7 +38,33 @@ def warp_to_openai_chunk(content: str, finish: bool = False) -> dict:
     return chunk
 
 
-async def do_global_search(root: str, query: str) -> AsyncGenerator[str, None]:
+def wrap_to_openai_chat_completion(content: str) -> dict:
+    timestamp = datetime.datetime.now().timestamp()
+    completion = {
+        "choices": [
+            {
+                "finish_reason": "stop",
+                "index": 0,
+                "message": {
+                    "role": "assistant",
+                    "content": content
+                }
+            }
+        ],
+        "created": int(timestamp),
+        "id": f'graphrag-chatcmpl-{timestamp}',
+        "model": "graphrag",
+        "system_fingerprint": "graphrag",
+        "object": "chat.completion"
+    }
+    return completion
+
+
+COMMUNITY_LEVEL = 1
+
+
+async def do_global_search_streaming(root: str, query: str) -> AsyncGenerator[str, None]:
+    print(f'do global search streaming: {root}, {query}')
     config = load_config(Path(root))
 
     async for content in global_search_streaming(
@@ -53,17 +78,36 @@ async def do_global_search(root: str, query: str) -> AsyncGenerator[str, None]:
         query=query
     ):
         if type(content) is str:
-            chunk = warp_to_openai_chunk(content)
+            chunk = warp_to_openai_streaming_chunk(content)
             yield f'data: {json.dumps(chunk)}\n\n'
         else:
             print(content)
 
-    end_chunk = warp_to_openai_chunk(content='', finish=True)
+    end_chunk = warp_to_openai_streaming_chunk(content='', finish=True)
     yield f'data: {json.dumps(end_chunk)}\n\n'
     yield 'data: [DONE]\n\n'
 
 
-async def do_local_search(root: str, query: str) -> AsyncGenerator[str, None]:
+async def do_global_search(root: str, query: str):
+    print(f'do global search: {root}, {query}')
+    config = load_config(Path(root))
+
+    result = await global_search(
+        config=config,
+        entities=read_parquet(root + '/output/entities.parquet'),
+        communities=read_parquet(root + '/output/communities.parquet'),
+        community_reports=read_parquet(root + '/output/community_reports.parquet'),
+        community_level=COMMUNITY_LEVEL,
+        dynamic_community_selection=True,
+        response_type='Multiple Paragraphs',
+        query=query
+    )
+
+    return result
+
+
+async def do_local_search_streaming(root: str, query: str) -> AsyncGenerator[str, None]:
+    print(f'do local search streaming: {root}, {query}')
     config = load_config(Path(root))
 
     async for content in local_search_streaming(
@@ -78,13 +122,58 @@ async def do_local_search(root: str, query: str) -> AsyncGenerator[str, None]:
         response_type='Multiple Paragraphs',
         query=query
     ):
-        if type(content) is str:
-            chunk = warp_to_openai_chunk(content)
+        if (type(content) is str):
+            chunk = warp_to_openai_streaming_chunk(content)
             yield f'data: {json.dumps(chunk)}\n\n'
         else:
             print(content)
 
-    end_chunk = warp_to_openai_chunk(content='', finish=True)
+    end_chunk = warp_to_openai_streaming_chunk(content='', finish=True)
+    yield f'data: {json.dumps(end_chunk)}\n\n'
+    yield 'data: [DONE]\n\n'
+
+
+async def do_local_search(root: str, query: str):
+    print(f'do local search: {root}, {query}')
+    config = load_config(Path(root))
+
+    result = await local_search(
+        config=config,
+        entities=read_parquet(root + '/output/entities.parquet'),
+        communities=read_parquet(root + '/output/communities.parquet'),
+        community_reports=read_parquet(root + '/output/community_reports.parquet'),
+        text_units=read_parquet(root + '/output/text_units.parquet'),
+        relationships=read_parquet(root + '/output/relationships.parquet'),
+        covariates=None,
+        community_level=COMMUNITY_LEVEL,
+        response_type='Multiple Paragraphs',
+        query=query
+    )
+
+    return result
+
+    
+async def do_drift_search(root: str, query: str) -> AsyncGenerator[str, None]:
+    config = load_config(Path(root))
+
+    async for content in drift_search_streaming(
+        config=config,
+        entities=read_parquet(root + '/output/entities.parquet'),
+        communities=read_parquet(root + '/output/communities.parquet'),
+        community_reports=read_parquet(root + '/output/community_reports.parquet'),
+        text_units=read_parquet(root + '/output/text_units.parquet'),
+        relationships=read_parquet(root + '/output/relationships.parquet'),
+        community_level=COMMUNITY_LEVEL,
+        response_type='Multiple Paragraphs',
+        query=query
+    ):
+        if type(content) is str:
+            chunk = warp_to_openai_streaming_chunk(content)
+            yield f'data: {json.dumps(chunk)}\n\n'
+        else:
+            print(content)
+
+    end_chunk = warp_to_openai_streaming_chunk(content='', finish=True)
     yield f'data: {json.dumps(end_chunk)}\n\n'
     yield 'data: [DONE]\n\n'
 
