@@ -1,0 +1,119 @@
+
+-Goal-
+Given a text document that is potentially relevant to this activity and a list of entity types, identify all entities of those types from the text and all relationships among the identified entities.
+
+-Steps-
+1. Identify all entities. For each identified entity, extract the following information:
+- entity_name: Name of the entity, capitalized
+- entity_type: One of the following types: [人员类别,机构单位,职务级别,状态,依据]
+- entity_description: Comprehensive description of the entity's attributes and activities
+Format each entity as ("entity"{tuple_delimiter}<entity_name>{tuple_delimiter}<entity_type>{tuple_delimiter}<entity_description>)
+
+2. From the entities identified in step 1, identify all pairs of (source_entity, target_entity) that are *clearly related* to each other.
+For each pair of related entities, extract the following information:
+- source_entity: name of the source entity, as identified in step 1
+- target_entity: name of the target entity, as identified in step 1
+- relationship_description: explanation as to why you think the source entity and the target entity are related to each other
+- relationship_strength: a numeric score indicating strength of the relationship between the source entity and target entity
+ Format each relationship as ("relationship"{tuple_delimiter}<source_entity>{tuple_delimiter}<target_entity>{tuple_delimiter}<relationship_description>{tuple_delimiter}<relationship_strength>)
+
+3. Return output in 简体中文 as a single list of all the entities and relationships identified in steps 1 and 2. Use **{record_delimiter}** as the list delimiter.
+
+4. If you have to translate into 简体中文, just translate the descriptions, nothing else!
+
+5. When finished, output {completion_delimiter}
+
+######################
+-Examples-
+######################
+Example 1:
+Entity_types: 人员类别,机构单位,职务级别,状态,依据
+Text:
+已进行公务员登记备案、纳入国家行政编制的厅局级以 下领导职务和非领导职务人员，参照公务员法管理的机关 (单位)已进行登记备案、在编的厅局级以下领导职务和非领导职务人员，列入实施范围。 经批准已从机关调离、辞去公职、辞退、退休的人员，已遴 选入额的法官、检察官和法官助理、检察官助理、书记员，已纳 入执法勤务警员和警务技术职务序列管理范围的人民警察， 国家综合性消防救援队伍管理指挥干部和专业技术干部，不列入实施范围。
+######################
+Output:
+("entity"{tuple_delimiter}公务员{tuple_delimiter}人员类别{tuple_delimiter}已进行登记备案、纳入国家行政编制的厅局级以下领导职务和非领导职务人员，参照公务员法管理的机关（单位）已进行登记备案、在编的厅局级以下领导职务和非领导职务人员。)
+("entity"{tuple_delimiter}法官{tuple_delimiter}人员类别{tuple_delimiter}经批准已遴选入额的法官。)
+("entity"{tuple_delimiter}检察官{tuple_delimiter}人员类别{tuple_delimiter}经批准已遴选入额的检察官。)
+("entity"{tuple_delimiter}法官助理{tuple_delimiter}人员类别{tuple_delimiter}经批准已遴选入额的法官助理。)
+("entity"{tuple_delimiter}检察官助理{tuple_delimiter}人员类别{tuple_delimiter}经批准已遴选入额的检察官助理。)
+("entity"{tuple_delimiter}书记员{tuple_delimiter}人员类别{tuple_delimiter}经批准已遴选入额的书记员。)
+("entity"{tuple_delimiter}人民警察{tuple_delimiter}人员类别{tuple_delimiter}已纳入执法勤务警员和警务技术职务序列管理范围的人民警察。)
+("entity"{tuple_delimiter}消防救援队伍干部{tuple_delimiter}人员类别{tuple_delimiter}国家综合性消防救援队伍管理指挥干部和专业技术干部。)
+("entity"{tuple_delimiter}调离人员{tuple_delimiter}人员类别{tuple_delimiter}经批准已从机关调离的人员。)
+("entity"{tuple_delimiter}辞去公职人员{tuple_delimiter}人员类别{tuple_delimiter}经批准已辞去公职的人员。)
+("entity"{tuple_delimiter}辞退人员{tuple_delimiter}人员类别{tuple_delimiter}经批准已被辞退的人员。)
+("entity"{tuple_delimiter}退休人员{tuple_delimiter}人员类别{tuple_delimiter}经批准已退休的人员。)
+("entity"{tuple_delimiter}实施范围{tuple_delimiter}依据{tuple_delimiter}用于确定哪些人员属于政策适用对象的标准或规定。)
+
+("relationship"{tuple_delimiter}公务员{tuple_delimiter}实施范围{tuple_delimiter}公务员属于实施范围内的人员类别，因其符合登记备案及编制要求。{tuple_delimiter}5)
+("relationship"{tuple_delimiter}法官{tuple_delimiter}实施范围{tuple_delimiter}法官不列入实施范围，因其已遴选入额，属于特殊管理对象。{tuple_delimiter}3)
+("relationship"{tuple_delimiter}检察官{tuple_delimiter}实施范围{tuple_delimiter}检察官不列入实施范围，因其已遴选入额，属于特殊管理对象。{tuple_delimiter}3)
+("relationship"{tuple_delimiter}法官助理{tuple_delimiter}实施范围{tuple_delimiter}法官助理不列入实施范围，因其已遴选入额，属于特殊管理对象。{tuple_delimiter}3)
+("relationship"{tuple_delimiter}检察官助理{tuple_delimiter}实施范围{tuple_delimiter}检察官助理不列入实施范围，因其已遴选入额，属于特殊管理对象。{tuple_delimiter}3)
+("relationship"{tuple_delimiter}书记员{tuple_delimiter}实施范围{tuple_delimiter}书记员不列入实施范围，因其已遴选入额，属于特殊管理对象。{tuple_delimiter}3)
+("relationship"{tuple_delimiter}人民警察{tuple_delimiter}实施范围{tuple_delimiter}人民警察不列入实施范围，因其已纳入执法勤务警员和警务技术职务序列管理范围。{tuple_delimiter}3)
+("relationship"{tuple_delimiter}消防救援队伍干部{tuple_delimiter}实施范围{tuple_delimiter}消防救援队伍干部不列入实施范围，因其属于国家综合性消防救援队伍管理指挥干部和专业技术干部。{tuple_delimiter}3)
+("relationship"{tuple_delimiter}调离人员{tuple_delimiter}实施范围{tuple_delimiter}调离人员不列入实施范围，因其已从机关调离。{tuple_delimiter}1)
+("relationship"{tuple_delimiter}辞去公职人员{tuple_delimiter}实施范围{tuple_delimiter}辞去公职人员不列入实施范围，因其已辞去公职。{tuple_delimiter}1)
+("relationship"{tuple_delimiter}辞退人员{tuple_delimiter}实施范围{tuple_delimiter}辞退人员不列入实施范围，因其已被辞退。{tuple_delimiter}1)
+("relationship"{tuple_delimiter}退休人员{tuple_delimiter}实施范围{tuple_delimiter}退休人员不列入实施范围，因其已退休。{tuple_delimiter}1)
+{completion_delimiter}
+
+######################
+Example 2:
+Entity_types: 人员类别,机构单位,职务级别,状态,依据
+Text:
+厅保密办在厅保密委的领导下落实保密制度和工作计划，定期向厅保密委汇报保密工作情况，按要求向同级保密行政管理部门报告保密工作情况；管理厅机关保密工作，对直属单位保密工作进行检查督导；对信息公开、新闻宣传、对外合作与交流等方面涉密事项的保密审查工作进行监督、检查和指导；按照保密技术装备标准的要求完善要害部门、部位的保密防护措施；对厅机关人员保密行为进行监督管理，定期组织开展保密检查，及时解决存在问题；组织开展保密宣传教育
+######################
+Output:
+("entity"{tuple_delimiter}厅保密办{tuple_delimiter}机构单位{tuple_delimiter}负责落实保密制度和工作计划，管理厅机关保密工作，并对直属单位保密工作进行检查督导的机构。)
+("entity"{tuple_delimiter}厅保密委{tuple_delimiter}机构单位{tuple_delimiter}领导厅保密办工作的机构，负责监督和指导保密相关事务。)
+("entity"{tuple_delimiter}保密行政管理部门{tuple_delimiter}机构单位{tuple_delimiter}同级负责接收保密工作情况报告并进行管理的部门。)
+("entity"{tuple_delimiter}厅机关{tuple_delimiter}机构单位{tuple_delimiter}厅保密办直接管理保密工作的单位。)
+("entity"{tuple_delimiter}直属单位{tuple_delimiter}机构单位{tuple_delimiter}由厅保密办进行保密工作检查督导的下属单位。)
+("entity"{tuple_delimiter}信息公开{tuple_delimiter}职务级别{tuple_delimiter}涉及保密审查的工作领域之一。)
+("entity"{tuple_delimiter}新闻宣传{tuple_delimiter}职务级别{tuple_delimiter}涉及保密审查的工作领域之一。)
+("entity"{tuple_delimiter}对外合作与交流{tuple_delimiter}职务级别{tuple_delimiter}涉及保密审查的工作领域之一。)
+("entity"{tuple_delimiter}保密技术装备标准{tuple_delimiter}依据{tuple_delimiter}用于完善要害部门、部位保密防护措施的标准。)
+("entity"{tuple_delimiter}保密宣传教育{tuple_delimiter}状态{tuple_delimiter}厅保密办组织开展的活动，旨在提升保密意识和行为规范。)
+("relationship"{tuple_delimiter}厅保密办{tuple_delimiter}厅保密委{tuple_delimiter}厅保密办在厅保密委的领导下开展工作，定期汇报保密工作情况。{tuple_delimiter}5)
+("relationship"{tuple_delimiter}厅保密办{tuple_delimiter}保密行政管理部门{tuple_delimiter}厅保密办按要求向同级保密行政管理部门报告保密工作情况。{tuple_delimiter}4)
+("relationship"{tuple_delimiter}厅保密办{tuple_delimiter}厅机关{tuple_delimiter}厅保密办直接管理厅机关的保密工作。{tuple_delimiter}5)
+("relationship"{tuple_delimiter}厅保密办{tuple_delimiter}直属单位{tuple_delimiter}厅保密办对直属单位的保密工作进行检查督导。{tuple_delimiter}4)
+("relationship"{tuple_delimiter}厅保密办{tuple_delimiter}信息公开{tuple_delimiter}厅保密办监督、检查和指导信息公开领域的保密审查工作。{tuple_delimiter}3)
+("relationship"{tuple_delimiter}厅保密办{tuple_delimiter}新闻宣传{tuple_delimiter}厅保密办监督、检查和指导新闻宣传领域的保密审查工作。{tuple_delimiter}3)
+("relationship"{tuple_delimiter}厅保密办{tuple_delimiter}对外合作与交流{tuple_delimiter}厅保密办监督、检查和指导对外合作与交流领域的保密审查工作。{tuple_delimiter}3)
+("relationship"{tuple_delimiter}厅保密办{tuple_delimiter}保密技术装备标准{tuple_delimiter}厅保密办按照保密技术装备标准完善要害部门、部位的保密防护措施。{tuple_delimiter}4)
+("relationship"{tuple_delimiter}厅保密办{tuple_delimiter}保密宣传教育{tuple_delimiter}厅保密办组织开展保密宣传教育以提升保密意识。{tuple_delimiter}5)
+{completion_delimiter}
+
+######################
+Example 3:
+Entity_types: 人员类别,机构单位,职务级别,状态,依据
+Text:
+各部门提出公务接待申请，经办公室审核，报省中心部门分管领导审批；由办公室统一安排的，报省中心办公室分管领导审批。如遇特殊情况，请示省中心分管领导同意后，可先安排接待，事后及时补办手续。
+######################
+Output:
+("entity"{tuple_delimiter}各部门{tuple_delimiter}机构单位{tuple_delimiter}提出公务接待申请的主体，负责发起相关流程。)
+("entity"{tuple_delimiter}办公室{tuple_delimiter}机构单位{tuple_delimiter}负责审核公务接待申请并统一安排接待工作的部门。)
+("entity"{tuple_delimiter}省中心部门分管领导{tuple_delimiter}职务级别{tuple_delimiter}负责审批各部门公务接待申请的领导。)
+("entity"{tuple_delimiter}省中心办公室分管领导{tuple_delimiter}职务级别{tuple_delimiter}负责审批由办公室统一安排的公务接待申请的领导。)
+("entity"{tuple_delimiter}特殊情况{tuple_delimiter}状态{tuple_delimiter}指需要紧急处理且无法按常规流程进行审批的情况。)
+("entity"{tuple_delimiter}补办手续{tuple_delimiter}依据{tuple_delimiter}在特殊情况下先安排接待后需及时完成的审批程序。)
+
+("relationship"{tuple_delimiter}各部门{tuple_delimiter}办公室{tuple_delimiter}各部门提出的公务接待申请需经办公室审核。{tuple_delimiter}4)
+("relationship"{tuple_delimiter}办公室{tuple_delimiter}省中心部门分管领导{tuple_delimiter}办公室审核后的公务接待申请需报省中心部门分管领导审批。{tuple_delimiter}5)
+("relationship"{tuple_delimiter}办公室{tuple_delimiter}省中心办公室分管领导{tuple_delimiter}由办公室统一安排的公务接待需报省中心办公室分管领导审批。{tuple_delimiter}5)
+("relationship"{tuple_delimiter}特殊情况{tuple_delimiter}省中心部门分管领导{tuple_delimiter}在特殊情况下，需请示省中心分管领导同意后方可先安排接待。{tuple_delimiter}3)
+("relationship"{tuple_delimiter}特殊情况{tuple_delimiter}补办手续{tuple_delimiter}在特殊情况下，接待完成后需及时补办审批手续。{tuple_delimiter}4)
+
+{completion_delimiter}
+
+######################
+-Real Data-
+######################
+Entity_types: {entity_types}
+Text: {input_text}
+######################
+Output:
