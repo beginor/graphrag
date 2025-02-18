@@ -22,7 +22,7 @@ async def completions(request: Request):
     search_method = model.split(':')[-1]
     last_message: Dict = dict['messages'][-1]
     query: str = last_message['content']
-    streaming = dict['stream']
+    streaming = dict.get('stream', False)
 
     root = get_model_root(model.split(':')[0])
 
@@ -56,7 +56,7 @@ async def completions(request: Request):
                 'Content-Type': 'text/event-stream'
             }
         )
-    
+
     else:
         if search_method == '全局搜索':
             (content, refs) = await do_global_search(
@@ -68,7 +68,7 @@ async def completions(request: Request):
                 root=root,
                 query= query
             )
-        
+
         return JSONResponse(
             content=wrap_to_openai_chat_completion(content), # type: ignore
         )
