@@ -5,7 +5,7 @@ Given a text document that is potentially relevant to this activity and a list o
 -Steps-
 1. Identify all entities. For each identified entity, extract the following information:
 - entity_name: Name of the entity, capitalized
-- entity_type: One of the following types: [人员类别,机构单位,职务级别,状态,依据]
+- entity_type: One of the following types: [机构/组织,角色/职位,文档/文件,项目/类别,流程/活动,金额/数值,时间/编号,地点/区域]
 - entity_description: Comprehensive description of the entity's attributes and activities
 Format each entity as ("entity"{tuple_delimiter}<entity_name>{tuple_delimiter}<entity_type>{tuple_delimiter}<entity_description>)
 
@@ -27,89 +27,224 @@ For each pair of related entities, extract the following information:
 -Examples-
 ######################
 Example 1:
-Entity_types: 人员类别,机构单位,职务级别,状态,依据
+Entity_types: [机构/组织,角色/职位,文档/文件,项目/类别,流程/活动,金额/数值,时间/编号,地点/区域]
 Text:
-已进行公务员登记备案、纳入国家行政编制的厅局级以 下领导职务和非领导职务人员，参照公务员法管理的机关 (单位)已进行登记备案、在编的厅局级以下领导职务和非领导职务人员，列入实施范围。 经批准已从机关调离、辞去公职、辞退、退休的人员，已遴 选入额的法官、检察官和法官助理、检察官助理、书记员，已纳 入执法勤务警员和警务技术职务序列管理范围的人民警察， 国家综合性消防救援队伍管理指挥干部和专业技术干部，不列入实施范围。
+中共广东省生态环境厅党组工作规则
+第一章 总 则
+第一条 为进一步规范和改进中共广东省生态环境厅党组（以下简称党组）工作，根据《中国共产党章程》《中国共产党党组工作条例》和有关党内规定，结合实际，制定本规则。
+第二条 党组在广东省委领导下开展工作，在广东省生态环境厅发挥领导作用。
+第三条 党组坚持以马克思列宁主义、毛泽东思想、邓小平理论、“三个代表”重要思想、科学发展观、习近平新时代中国特色社会主义思想为指导，坚决维护习近平总书记核心地位，坚决维护党中央权威和集中统一领导，全面贯彻党的基本理论、基本路线、基本方略，坚决贯彻落实习近平生态文明思想，切实履行领导职责，充分发挥领导作用，不断提高领导水平，全面加强生态环境保护和生态文明建设，坚决打好污染防治攻坚战，推进生态环境治理体系和治理能力现代化，为广东人民创造良好生产生活环境。
+第四条 党组严格遵循《中国共产党党组工作条例》规定的工作原则。
+第二章 职 责
+第五条 党组发挥把方向、管大局、保落实的领导作用，全面履行领导责任，加强对生态环境厅业务工作和党的建设的领导，推动党的主张和重大决策转化为法律法规、政策政令和社会共识，确保党的理论和路线方针政策的贯彻落实。
+第六条 党组按《中国共产党党组工作条例》有关规定讨论和决定重大问题。
+紧密结合实际，列出讨论和决定重大问题清单，并根据需要动态调整。
+第七条 党组按《中国共产党党组工作条例》《党委（党组）落实全面从严治党主体责任规定》有关要求履行全面从严治党主体责任。
+坚持党建工作与业务工作同谋划、同部署、同推进、同考核，加强对党的建设的领导，落实新时代党的建设总要求，提高党的建设质量。
+党组领导厅机关、派出机构和直属单位党组织的工作，接受省委直属机关工委对厅党组履行机关党建主体责任的指导督导，将党支部建设作为最重要的基本建设。
+党组加强对全面从严治党各项工作的领导，每半年专题研究1次全面从严治党工作。充分发挥直属机关党委、直属机关纪委作用，做好全面从严治党各项工作。
+党组书记履行抓党建第一责任人职责，党组其他成员按照“一岗双责”要求抓好职责范围内党的建设工作。党组及其成员贯彻执行全面从严治党主体责任情况纳入民主生活会、述职述廉内容。
+第八条 党组承担意识形态工作全面领导责任，每年至少专题研究 2次意识形态工作，每半年向省委专题汇报1次意识形态工作。
+第九条 党组加强对本单位统战工作和工会、共青团、妇联等群团工作的领导，重视党外干部、人才的培养使用，更好团结带领党外干部和群众，凝聚各方面智慧力量，完成各项任务。
+第十条 党组书记主持党组全面工作，负责召集和主持党组会议，签发党组文件。党组书记因故离岗期间，可以委托一名党组成员主持党组日常工作。党组其他成员根据党组决定，按照授权负责有关工作，行使相关职权。
 ######################
 Output:
-("entity"{tuple_delimiter}公务员{tuple_delimiter}人员类别{tuple_delimiter}已进行登记备案、纳入国家行政编制的厅局级以下领导职务和非领导职务人员，参照公务员法管理的机关（单位）已进行登记备案、在编的厅局级以下领导职务和非领导职务人员。)
-("entity"{tuple_delimiter}法官{tuple_delimiter}人员类别{tuple_delimiter}经批准已遴选入额的法官。)
-("entity"{tuple_delimiter}检察官{tuple_delimiter}人员类别{tuple_delimiter}经批准已遴选入额的检察官。)
-("entity"{tuple_delimiter}法官助理{tuple_delimiter}人员类别{tuple_delimiter}经批准已遴选入额的法官助理。)
-("entity"{tuple_delimiter}检察官助理{tuple_delimiter}人员类别{tuple_delimiter}经批准已遴选入额的检察官助理。)
-("entity"{tuple_delimiter}书记员{tuple_delimiter}人员类别{tuple_delimiter}经批准已遴选入额的书记员。)
-("entity"{tuple_delimiter}人民警察{tuple_delimiter}人员类别{tuple_delimiter}已纳入执法勤务警员和警务技术职务序列管理范围的人民警察。)
-("entity"{tuple_delimiter}消防救援队伍干部{tuple_delimiter}人员类别{tuple_delimiter}国家综合性消防救援队伍管理指挥干部和专业技术干部。)
-("entity"{tuple_delimiter}调离人员{tuple_delimiter}人员类别{tuple_delimiter}经批准已从机关调离的人员。)
-("entity"{tuple_delimiter}辞去公职人员{tuple_delimiter}人员类别{tuple_delimiter}经批准已辞去公职的人员。)
-("entity"{tuple_delimiter}辞退人员{tuple_delimiter}人员类别{tuple_delimiter}经批准已被辞退的人员。)
-("entity"{tuple_delimiter}退休人员{tuple_delimiter}人员类别{tuple_delimiter}经批准已退休的人员。)
-("entity"{tuple_delimiter}实施范围{tuple_delimiter}依据{tuple_delimiter}用于确定哪些人员属于政策适用对象的标准或规定。)
-
-("relationship"{tuple_delimiter}公务员{tuple_delimiter}实施范围{tuple_delimiter}公务员属于实施范围内的人员类别，因其符合登记备案及编制要求。{tuple_delimiter}5)
-("relationship"{tuple_delimiter}法官{tuple_delimiter}实施范围{tuple_delimiter}法官不列入实施范围，因其已遴选入额，属于特殊管理对象。{tuple_delimiter}3)
-("relationship"{tuple_delimiter}检察官{tuple_delimiter}实施范围{tuple_delimiter}检察官不列入实施范围，因其已遴选入额，属于特殊管理对象。{tuple_delimiter}3)
-("relationship"{tuple_delimiter}法官助理{tuple_delimiter}实施范围{tuple_delimiter}法官助理不列入实施范围，因其已遴选入额，属于特殊管理对象。{tuple_delimiter}3)
-("relationship"{tuple_delimiter}检察官助理{tuple_delimiter}实施范围{tuple_delimiter}检察官助理不列入实施范围，因其已遴选入额，属于特殊管理对象。{tuple_delimiter}3)
-("relationship"{tuple_delimiter}书记员{tuple_delimiter}实施范围{tuple_delimiter}书记员不列入实施范围，因其已遴选入额，属于特殊管理对象。{tuple_delimiter}3)
-("relationship"{tuple_delimiter}人民警察{tuple_delimiter}实施范围{tuple_delimiter}人民警察不列入实施范围，因其已纳入执法勤务警员和警务技术职务序列管理范围。{tuple_delimiter}3)
-("relationship"{tuple_delimiter}消防救援队伍干部{tuple_delimiter}实施范围{tuple_delimiter}消防救援队伍干部不列入实施范围，因其属于国家综合性消防救援队伍管理指挥干部和专业技术干部。{tuple_delimiter}3)
-("relationship"{tuple_delimiter}调离人员{tuple_delimiter}实施范围{tuple_delimiter}调离人员不列入实施范围，因其已从机关调离。{tuple_delimiter}1)
-("relationship"{tuple_delimiter}辞去公职人员{tuple_delimiter}实施范围{tuple_delimiter}辞去公职人员不列入实施范围，因其已辞去公职。{tuple_delimiter}1)
-("relationship"{tuple_delimiter}辞退人员{tuple_delimiter}实施范围{tuple_delimiter}辞退人员不列入实施范围，因其已被辞退。{tuple_delimiter}1)
-("relationship"{tuple_delimiter}退休人员{tuple_delimiter}实施范围{tuple_delimiter}退休人员不列入实施范围，因其已退休。{tuple_delimiter}1)
+("entity"{tuple_delimiter}中共广东省生态环境厅党组{tuple_delimiter}机构/组织{tuple_delimiter}中共广东省生态环境厅党组是一个领导机构，负责在广东省生态环境厅内发挥领导作用，全面履行领导责任，包括生态环境保护、生态文明建设以及党的建设等工作。)
+{record_delimiter}
+("entity"{tuple_delimiter}广东省委{tuple_delimiter}机构/组织{tuple_delimiter}广东省委是中共广东省委员会的简称，负责领导广东省内的各项工作，包括对中共广东省生态环境厅党组的指导和监督。)
+{record_delimiter}
+("entity"{tuple_delimiter}中国共产党章程{tuple_delimiter}文档/文件{tuple_delimiter}《中国共产党章程》是中国共产党的根本大法，规定了党的基本纲领、组织原则和活动准则，为各级党组织的工作提供了依据。)
+{record_delimiter}
+("entity"{tuple_delimiter}中国共产党党组工作条例{tuple_delimiter}文档/文件{tuple_delimiter}《中国共产党党组工作条例》是一部规范党组工作的党内法规，明确了党组的职责、工作原则和运行机制等内容。)
+{record_delimiter}
+("entity"{tuple_delimiter}马克思列宁主义{tuple_delimiter}项目/类别{tuple_delimiter}马克思列宁主义是一种思想理论体系，为中共广东省生态环境厅党组的指导思想之一，用于指导其实践和决策。)
+{record_delimiter}
+("entity"{tuple_delimiter}毛泽东思想{tuple_delimiter}项目/类别{tuple_delimiter}毛泽东思想是中国化的马克思主义理论，为中共广东省生态环境厅党组的重要指导思想之一。)
+{record_delimiter}
+("entity"{tuple_delimiter}邓小平理论{tuple_delimiter}项目/类别{tuple_delimiter}邓小平理论是中国特色社会主义理论的重要组成部分，为中共广东省生态环境厅党组的指导思想之一。)
+{record_delimiter}
+("entity"{tuple_delimiter}三个代表重要思想{tuple_delimiter}项目/类别{tuple_delimiter}“三个代表”重要思想是中国共产党在新世纪初提出的思想理论，为中共广东省生态环境厅党组的指导思想之一。)
+{record_delimiter}
+("entity"{tuple_delimiter}科学发展观{tuple_delimiter}项目/类别{tuple_delimiter}科学发展观是中国共产党提出的发展理念，强调以人为本、全面协调可持续发展，为中共广东省生态环境厅党组的指导思想之一。)
+{record_delimiter}
+("entity"{tuple_delimiter}习近平新时代中国特色社会主义思想{tuple_delimiter}项目/类别{tuple_delimiter}习近平新时代中国特色社会主义思想是当代中国的马克思主义，为中共广东省生态环境厅党组的核心指导思想之一。)
+{record_delimiter}
+("entity"{tuple_delimiter}生态环境保护{tuple_delimiter}流程/活动{tuple_delimiter}生态环境保护是指通过政策制定、法律法规实施等手段，保护自然环境，维护生态平衡，促进可持续发展的活动。)
+{record_delimiter}
+("entity"{tuple_delimiter}生态文明建设{tuple_delimiter}流程/活动{tuple_delimiter}生态文明建设是指通过推动绿色发展、资源节约和环境保护等措施，实现人与自然和谐共生的目标。)
+{record_delimiter}
+("entity"{tuple_delimiter}污染防治攻坚战{tuple_delimiter}流程/活动{tuple_delimiter}污染防治攻坚战是指通过一系列政策措施和技术手段，集中力量解决环境污染问题，改善生态环境质量的行动。)
+{record_delimiter}
+("entity"{tuple_delimiter}党支部建设{tuple_delimiter}流程/活动{tuple_delimiter}党支部建设是指加强基层党组织建设，提升党支部的组织力和战斗力，确保党的政策和决策能够有效落实的工作。)
+{record_delimiter}
+("entity"{tuple_delimiter}统战工作{tuple_delimiter}流程/活动{tuple_delimiter}统战工作是指通过团结党外人士和群众，凝聚各方智慧力量，共同完成党和国家各项任务的工作。)
+{record_delimiter}
+("entity"{tuple_delimiter}工会{tuple_delimiter}机构/组织{tuple_delimiter}工会是职工自愿结合的群众组织，负责维护职工权益，促进劳动关系和谐。)
+{record_delimiter}
+("entity"{tuple_delimiter}共青团{tuple_delimiter}机构/组织{tuple_delimiter}共青团是中国共产党领导下的青年群众组织，负责团结和引导青年参与国家建设和社会发展。)
+{record_delimiter}
+("entity"{tuple_delimiter}妇联{tuple_delimiter}机构/组织{tuple_delimiter}妇联是妇女群众组织，负责维护妇女权益，推动妇女事业发展。)
+{record_delimiter}
+("entity"{tuple_delimiter}党组书记{tuple_delimiter}角色/职位{tuple_delimiter}党组书记是中共广东省生态环境厅党组的主要负责人，负责主持党组全面工作，召集和主持党组会议，签发党组文件。)
+{record_delimiter}
+("relationship"{tuple_delimiter}中共广东省生态环境厅党组{tuple_delimiter}广东省委{tuple_delimiter}中共广东省生态环境厅党组在广东省委领导下开展工作，接受其指导和监督，体现了上下级领导关系。{tuple_delimiter}9)
+{record_delimiter}
+("relationship"{tuple_delimiter}中共广东省生态环境厅党组{tuple_delimiter}中国共产党章程{tuple_delimiter}中共广东省生态环境厅党组根据《中国共产党章程》的规定开展工作，遵循其基本原则和要求。{tuple_delimiter}8)
+{record_delimiter}
+("relationship"{tuple_delimiter}中共广东省生态环境厅党组{tuple_delimiter}中国共产党党组工作条例{tuple_delimiter}中共广东省生态环境厅党组严格遵循《中国共产党党组工作条例》规定的工作原则，确保规范化运作。{tuple_delimiter}9)
+{record_delimiter}
+("relationship"{tuple_delimiter}中共广东省生态环境厅党组{tuple_delimiter}生态环境保护{tuple_delimiter}中共广东省生态环境厅党组全面加强生态环境保护工作，推动生态文明建设和污染防治攻坚战。{tuple_delimiter}10)
+{record_delimiter}
+("relationship"{tuple_delimiter}中共广东省生态环境厅党组{tuple_delimiter}党支部建设{tuple_delimiter}中共广东省生态环境厅党组将党支部建设作为最重要的基本建设，加强对基层党组织的领导。{tuple_delimiter}8)
+{record_delimiter}
+("relationship"{tuple_delimiter}中共广东省生态环境厅党组{tuple_delimiter}统战工作{tuple_delimiter}中共广东省生态环境厅党组加强对统战工作的领导，团结党外干部和群众，凝聚各方智慧力量。{tuple_delimiter}7)
+{record_delimiter}
+("relationship"{tuple_delimiter}党组书记{tuple_delimiter}中共广东省生态环境厅党组{tuple_delimiter}党组书记是中共广东省生态环境厅党组的主要负责人，主持党组全面工作并行使相关职权。{tuple_delimiter}10)
+{record_delimiter}
+("relationship"{tuple_delimiter}中共广东省生态环境厅党组{tuple_delimiter}工会{tuple_delimiter}中共广东省生态环境厅党组加强对工会工作的领导，支持其维护职工权益和促进劳动关系和谐。{tuple_delimiter}6)
+{record_delimiter}
+("relationship"{tuple_delimiter}中共广东省生态环境厅党组{tuple_delimiter}共青团{tuple_delimiter}中共广东省生态环境厅党组加强对共青团工作的领导，支持其团结和引导青年参与国家建设。{tuple_delimiter}6)
+{record_delimiter}
+("relationship"{tuple_delimiter}中共广东省生态环境厅党组{tuple_delimiter}妇联{tuple_delimiter}中共广东省生态环境厅党组加强对妇联工作的领导，支持其维护妇女权益和推动妇女事业发展。{tuple_delimiter}6)
+{record_delimiter}
 {completion_delimiter}
-
 ######################
 Example 2:
-Entity_types: 人员类别,机构单位,职务级别,状态,依据
+Entity_types: [机构/组织,角色/职位,文档/文件,项目/类别,流程/活动,金额/数值,时间/编号,地点/区域]
 Text:
-厅保密办在厅保密委的领导下落实保密制度和工作计划，定期向厅保密委汇报保密工作情况，按要求向同级保密行政管理部门报告保密工作情况；管理厅机关保密工作，对直属单位保密工作进行检查督导；对信息公开、新闻宣传、对外合作与交流等方面涉密事项的保密审查工作进行监督、检查和指导；按照保密技术装备标准的要求完善要害部门、部位的保密防护措施；对厅机关人员保密行为进行监督管理，定期组织开展保密检查，及时解决存在问题；组织开展保密宣传教育
+借用（跟班学习）、外派人员管理办法粤环监测〔2022〕2号
+第一条 为严肃干部人事工作纪律，加强干部队伍建设，规范和完善借用（跟班学习）、外派人员的管理，根据国家、省有关规定，结合实际，制定本办法。
+第二条 广东省生态环境监测中心（以下简称省中心）借用（跟班学习）、外派人员管理工作在省中心党委领导下，由党委办公室（人力资源部）（以下简称党委办）具体组织实施。
+第三条 本办法所称借用，是指因重要任务、临时性工作任务，或单位有编制空缺、在编干部请休假、脱产培训等3个月以上的情况下，需借用外单位工作人员到省中心帮助工作。跟班学习，是指为加强干部培养锻炼，尤其是年轻干部的培养，外单位安排工作人员到省中心学习锻炼。
+外派，是指从省中心派出工作人员到外单位帮助工作，即省中心为派出方。
+第四条 借用（跟班学习）、外派时间一期不超过三个月，确因工作需可按程序经审批后延续一期，时间合计原则上不得超过半年。
+第五条 借用（跟班学习）、外派人员审批程序
+（一）借用（跟班学习）人员审批程序：有需求的部门每年年初提出本年度需求申请，申请时应当说明理由、人数、期限、拟安排的具体工作任务和拟派出单位。党委办汇总提出初步意见后，提交省中心党委会审议。计划外临时需求，由用人部门与派出单位协商确定，经分管业务和分管人事的中心领导审核，由党委办提交中心党委会审议。期限内调整人员，需经分管业务和分管人事的中心领导审批。跟班学习的，需由派出方来函提出跟班学习需求和意向人选。借用（跟班学习）人员审批时，派出单位需提供现实表现和廉政情况材料。
+（二）外派人员审批程序：由外单位来函，党委办会有关部门沟通提出外派意向人选和拟办意见，报分管业务和分管人事的中心领导审核，提交中心党委会审议。
+第六条 借用（跟班学习）人员的管理及待遇
+（一）借用（跟班学习）人员工作期间，其人事关系、工资福利和职称评聘等保留在派出单位不变。党组织关系按党内有关规定办理。
+（二）借用（跟班学习）人员不再承担派出单位的工作任务，派出单位在定员、定岗、定级、选拔任用等干部工作中，应公平公正对待相应人员。
+（三）用人部门负责对借用（跟班学习）人员进行日常管理，并帮助解决工作、学习和生活中的实际困难；负责对其进行保密、廉政、安全教育并做好谈话记录，并负责督促其严格遵守保密、廉政、安全等工作纪律。工作期间的出差、请休假等执行省中心有关规定。
+上述人员来省中心报到后，用人部门提出申请办理临时饭卡、OA账号，党委办审核后转办公室办理，工作人员要妥善保管，不得借予他人使用，工作结束时须及时交回。工作期间使用的电脑等固定资产由用人部门进行调配，如确需另行购置，由用人部门提出申请，并严格按固定资产管理办法管理。
+工作期限结束，用人部门要安排做好工作交接，退还临时饭卡、取消OA账号，填写移交清单，并在五个工作日内送党委办备案。
+（四）对未经批准擅自借用（跟班学习）人员或擅自延期的，或对借用（跟班学习）人员疏于管理造成不良后果的，将视情节轻重，严肃追究用人部门主要领导责任。
+（五）借用（跟班学习）人员的考核。借用（跟班学习）人员平时考核和年度考核由派出单位负责，用人部门配合提供工作鉴定意见。工作结束时，用人部门须向派出单位出具工作鉴定意见，并抄送党委办备案。
+第七条 外派人员管理
+外派工作期间由外单位管理，党委办与外单位加强沟通、保持联系。工作期限结束，向用人单位提出按时归位，如需延期，按第四、第六条办理。
+第八条 各驻市站借用（跟班学习）、外派人员参照本办法执行。
+第九条 本办法由党委办负责解释。
+第十条 本办法自印发之日起实施。
 ######################
 Output:
-("entity"{tuple_delimiter}厅保密办{tuple_delimiter}机构单位{tuple_delimiter}负责落实保密制度和工作计划，管理厅机关保密工作，并对直属单位保密工作进行检查督导的机构。)
-("entity"{tuple_delimiter}厅保密委{tuple_delimiter}机构单位{tuple_delimiter}领导厅保密办工作的机构，负责监督和指导保密相关事务。)
-("entity"{tuple_delimiter}保密行政管理部门{tuple_delimiter}机构单位{tuple_delimiter}同级负责接收保密工作情况报告并进行管理的部门。)
-("entity"{tuple_delimiter}厅机关{tuple_delimiter}机构单位{tuple_delimiter}厅保密办直接管理保密工作的单位。)
-("entity"{tuple_delimiter}直属单位{tuple_delimiter}机构单位{tuple_delimiter}由厅保密办进行保密工作检查督导的下属单位。)
-("entity"{tuple_delimiter}信息公开{tuple_delimiter}职务级别{tuple_delimiter}涉及保密审查的工作领域之一。)
-("entity"{tuple_delimiter}新闻宣传{tuple_delimiter}职务级别{tuple_delimiter}涉及保密审查的工作领域之一。)
-("entity"{tuple_delimiter}对外合作与交流{tuple_delimiter}职务级别{tuple_delimiter}涉及保密审查的工作领域之一。)
-("entity"{tuple_delimiter}保密技术装备标准{tuple_delimiter}依据{tuple_delimiter}用于完善要害部门、部位保密防护措施的标准。)
-("entity"{tuple_delimiter}保密宣传教育{tuple_delimiter}状态{tuple_delimiter}厅保密办组织开展的活动，旨在提升保密意识和行为规范。)
-("relationship"{tuple_delimiter}厅保密办{tuple_delimiter}厅保密委{tuple_delimiter}厅保密办在厅保密委的领导下开展工作，定期汇报保密工作情况。{tuple_delimiter}5)
-("relationship"{tuple_delimiter}厅保密办{tuple_delimiter}保密行政管理部门{tuple_delimiter}厅保密办按要求向同级保密行政管理部门报告保密工作情况。{tuple_delimiter}4)
-("relationship"{tuple_delimiter}厅保密办{tuple_delimiter}厅机关{tuple_delimiter}厅保密办直接管理厅机关的保密工作。{tuple_delimiter}5)
-("relationship"{tuple_delimiter}厅保密办{tuple_delimiter}直属单位{tuple_delimiter}厅保密办对直属单位的保密工作进行检查督导。{tuple_delimiter}4)
-("relationship"{tuple_delimiter}厅保密办{tuple_delimiter}信息公开{tuple_delimiter}厅保密办监督、检查和指导信息公开领域的保密审查工作。{tuple_delimiter}3)
-("relationship"{tuple_delimiter}厅保密办{tuple_delimiter}新闻宣传{tuple_delimiter}厅保密办监督、检查和指导新闻宣传领域的保密审查工作。{tuple_delimiter}3)
-("relationship"{tuple_delimiter}厅保密办{tuple_delimiter}对外合作与交流{tuple_delimiter}厅保密办监督、检查和指导对外合作与交流领域的保密审查工作。{tuple_delimiter}3)
-("relationship"{tuple_delimiter}厅保密办{tuple_delimiter}保密技术装备标准{tuple_delimiter}厅保密办按照保密技术装备标准完善要害部门、部位的保密防护措施。{tuple_delimiter}4)
-("relationship"{tuple_delimiter}厅保密办{tuple_delimiter}保密宣传教育{tuple_delimiter}厅保密办组织开展保密宣传教育以提升保密意识。{tuple_delimiter}5)
+("entity"{tuple_delimiter}广东省生态环境监测中心{tuple_delimiter}机构/组织{tuple_delimiter}广东省生态环境监测中心（简称省中心）是一个负责生态环境监测工作的机构，其借用（跟班学习）、外派人员管理工作由党委办公室（人力资源部）具体组织实施。)
+{record_delimiter}
+("entity"{tuple_delimiter}党委办公室（人力资源部）{tuple_delimiter}机构/组织{tuple_delimiter}党委办公室（人力资源部）是广东省生态环境监测中心的内设部门，负责借用（跟班学习）、外派人员管理的具体实施工作。)
+{record_delimiter}
+("entity"{tuple_delimiter}借用（跟班学习）{tuple_delimiter}流程/活动{tuple_delimiter}借用（跟班学习）是指因重要任务、临时性工作任务或单位有编制空缺等情况，需借用外单位工作人员到省中心帮助工作或进行学习锻炼的活动。)
+{record_delimiter}
+("entity"{tuple_delimiter}外派{tuple_delimiter}流程/活动{tuple_delimiter}外派是指从省中心派出工作人员到外单位帮助工作的活动，省中心为派出方。)
+{record_delimiter}
+("entity"{tuple_delimiter}粤环监测〔2022〕2号{tuple_delimiter}文档/文件{tuple_delimiter}《粤环监测〔2022〕2号》是广东省生态环境监测中心发布的关于借用（跟班学习）、外派人员管理办法的正式文件。)
+{record_delimiter}
+("entity"{tuple_delimiter}省中心党委{tuple_delimiter}机构/组织{tuple_delimiter}省中心党委是广东省生态环境监测中心的领导机构，负责领导和指导借用（跟班学习）、外派人员管理工作。)
+{record_delimiter}
+("entity"{tuple_delimiter}派出单位{tuple_delimiter}机构/组织{tuple_delimiter}派出单位是指借出工作人员到省中心或接收省中心外派人员的外部单位。)
+{record_delimiter}
+("entity"{tuple_delimiter}用人部门{tuple_delimiter}角色/职位{tuple_delimiter}用人部门是指在省中心内部需要借用（跟班学习）或外派人员的具体业务部门，负责日常管理和考核等工作。)
+{record_delimiter}
+("entity"{tuple_delimiter}三个月{tuple_delimiter}时间/编号{tuple_delimiter}三个月是借用（跟班学习）、外派人员单期的最长时间限制，确因工作需要可按程序延长一期，但总时长原则上不得超过半年。)
+{record_delimiter}
+("entity"{tuple_delimiter}党组织关系{tuple_delimiter}项目/类别{tuple_delimiter}党组织关系是指借用（跟班学习）、外派人员在工作期间按照党内有关规定办理的党籍和党组织隶属关系。)
+{record_delimiter}
+("entity"{tuple_delimiter}OA账号{tuple_delimiter}项目/类别{tuple_delimiter}OA账号是指借用（跟班学习）人员在省中心工作期间使用的办公自动化系统账号，用于日常工作和沟通。)
+{record_delimiter}
+("entity"{tuple_delimiter}固定资产{tuple_delimiter}项目/类别{tuple_delimiter}固定资产是指借用（跟班学习）人员在工作期间使用的电脑等设备，由用人部门调配并按固定资产管理规定进行管理。)
+{record_delimiter}
+("relationship"{tuple_delimiter}广东省生态环境监测中心{tuple_delimiter}党委办公室（人力资源部）{tuple_delimiter}广东省生态环境监测中心的借用（跟班学习）、外派人员管理工作由党委办公室（人力资源部）具体组织实施，体现了上下级协作关系。{tuple_delimiter}9)
+{record_delimiter}
+("relationship"{tuple_delimiter}广东省生态环境监测中心{tuple_delimiter}省中心党委{tuple_delimiter}广东省生态环境监测中心的借用（跟班学习）、外派人员管理工作在省中心党委领导下开展，体现了党的领导作用。{tuple_delimiter}10)
+{record_delimiter}
+("relationship"{tuple_delimiter}借用（跟班学习）{tuple_delimiter}派出单位{tuple_delimiter}借用（跟班学习）涉及派出单位借出工作人员到省中心帮助工作或进行学习锻炼，体现了双方的合作关系。{tuple_delimiter}8)
+{record_delimiter}
+("relationship"{tuple_delimiter}外派{tuple_delimiter}派出单位{tuple_delimiter}外派涉及省中心派出工作人员到外单位帮助工作，体现了省中心与派出单位之间的协作关系。{tuple_delimiter}8)
+{record_delimiter}
+("relationship"{tuple_delimiter}借用（跟班学习）{tuple_delimiter}用人部门{tuple_delimiter}借用（跟班学习）人员由用人部门负责日常管理，并帮助解决工作、学习和生活中的实际困难，体现了部门间的管理职责。{tuple_delimiter}9)
+{record_delimiter}
+("relationship"{tuple_delimiter}外派{tuple_delimiter}党委办公室（人力资源部）{tuple_delimiter}外派人员的管理工作由党委办公室（人力资源部）与外单位加强沟通、保持联系，体现了部门间的协调关系。{tuple_delimiter}7)
+{record_delimiter}
+("relationship"{tuple_delimiter}借用（跟班学习）{tuple_delimiter}OA账号{tuple_delimiter}借用（跟班学习）人员在省中心工作期间需使用OA账号进行日常工作和沟通，体现了工具与活动的关联性。{tuple_delimiter}6)
+{record_delimiter}
+("relationship"{tuple_delimiter}借用（跟班学习）{tuple_delimiter}固定资产{tuple_delimiter}借用（跟班学习）人员在工作期间使用的电脑等固定资产由用人部门调配和管理，体现了资源与活动的关联性。{tuple_delimiter}7)
+{record_delimiter}
+("relationship"{tuple_delimiter}借用（跟班学习）{tuple_delimiter}三个月{tuple_delimiter}借用（跟班学习）的时间限制为三个月，确因工作需要可按程序延长，体现了时间对活动的约束性。{tuple_delimiter}8)
+{record_delimiter}
+("relationship"{tuple_delimiter}粤环监测〔2022〕2号{tuple_delimiter}广东省生态环境监测中心{tuple_delimiter}《粤环监测〔2022〕2号》是广东省生态环境监测中心发布的关于借用（跟班学习）、外派人员管理的正式文件，体现了文件与机构的关系。{tuple_delimiter}9)
+{record_delimiter}
 {completion_delimiter}
-
 ######################
 Example 3:
-Entity_types: 人员类别,机构单位,职务级别,状态,依据
+Entity_types: [机构/组织,角色/职位,文档/文件,项目/类别,流程/活动,金额/数值,时间/编号,地点/区域]
 Text:
-各部门提出公务接待申请，经办公室审核，报省中心部门分管领导审批；由办公室统一安排的，报省中心办公室分管领导审批。如遇特殊情况，请示省中心分管领导同意后，可先安排接待，事后及时补办手续。
+根据《广东省财政厅关于做好 2024 年省级财政资金项目入 库储备工作的通知》要求，2024 年省级预算“一上”提前到6 月底， 专项资金项目应当在 6 月底前纳入财政预算系统。请各处室、直 属单位围绕重点工作和一级项目清单 ( 附件 1 ) 抓紧谋划项目， 于 5 月 15 日前将预审材料提交给财务与审计处。
+一、申报项目类型及材料
+( 一 ) 项目类型及要求
+对污染防治攻坚任务支撑作用大、环境效益显著的水污染防 治和省内外流域生态补偿、近岸海域污染防治、大气污染防治与 应对气候变化、土壤和地下水污染防治、固体废物与化学品污染 防治、核与辐射安全及污染防治、生态环境监测、生态环境监管 与督察方向项目。
+每个处室申报不超过 2 个项目。不允许将日常管理工作委托 给第三方开展，不得与运转性经费支持内容重复。
+(二) 申报材料
+1．2024 年省级生态环境专项资金省本级申报项目清单 ( 附
+件 2)。处室申报项目，报分管厅领导审签；直属单位申报项目， 经对口业务处室审核后报分管厅领导审签；监测中心申报项目， 按照《广东省生态环境厅省级生态环境监测资金项目管理办法》 要求将年度总体项目计划报厅党组会审定后，编制项目具体绩效 表及实施方案报分管厅领导审签。
+2．二级项目预算绩效目标申报表 ( 附件 3 )、项目实施方案 ( 附件 4)。
+二、入库流程
+( 一 ) 预审
+项目申报单位向分管厅领导报告后，向财务与审计处提交加 盖处室 (单位) 公章的项目预算绩效目标申报表、实施方案 (纸 质版 2 份及可编辑版)、承诺函 ( 附件 5，纸质版)，财务与审计 处组织预审并反馈意见。
+(二) 专家评审
+项 目 申报单位根据预审意见修改申报材料后，将 2024 年省 级生态环境专项资金省本级申报项目清单报分管厅领导审签，连 同盖厅章的项目预算绩效目标申报表、实施方案 (纸质版 2 份及 可编辑版) 一并提交财务与审计处。财务处会同技术中心组织专 家评审并向申报单位反馈意见。
+(三) 提交厅集体决策
+财务与审计处根据项目的紧迫性和成熟度编制拟入库项目 清单，项目经厅务会议或厅长办公会议审议通过后纳入省级生态
+环境专项资金项目库。财务与审计处通知申报单位将项目录入广 东省省级生态环境专项资金管理信息系统、省财政厅“数字政府” 预算系统。
 ######################
 Output:
-("entity"{tuple_delimiter}各部门{tuple_delimiter}机构单位{tuple_delimiter}提出公务接待申请的主体，负责发起相关流程。)
-("entity"{tuple_delimiter}办公室{tuple_delimiter}机构单位{tuple_delimiter}负责审核公务接待申请并统一安排接待工作的部门。)
-("entity"{tuple_delimiter}省中心部门分管领导{tuple_delimiter}职务级别{tuple_delimiter}负责审批各部门公务接待申请的领导。)
-("entity"{tuple_delimiter}省中心办公室分管领导{tuple_delimiter}职务级别{tuple_delimiter}负责审批由办公室统一安排的公务接待申请的领导。)
-("entity"{tuple_delimiter}特殊情况{tuple_delimiter}状态{tuple_delimiter}指需要紧急处理且无法按常规流程进行审批的情况。)
-("entity"{tuple_delimiter}补办手续{tuple_delimiter}依据{tuple_delimiter}在特殊情况下先安排接待后需及时完成的审批程序。)
-
-("relationship"{tuple_delimiter}各部门{tuple_delimiter}办公室{tuple_delimiter}各部门提出的公务接待申请需经办公室审核。{tuple_delimiter}4)
-("relationship"{tuple_delimiter}办公室{tuple_delimiter}省中心部门分管领导{tuple_delimiter}办公室审核后的公务接待申请需报省中心部门分管领导审批。{tuple_delimiter}5)
-("relationship"{tuple_delimiter}办公室{tuple_delimiter}省中心办公室分管领导{tuple_delimiter}由办公室统一安排的公务接待需报省中心办公室分管领导审批。{tuple_delimiter}5)
-("relationship"{tuple_delimiter}特殊情况{tuple_delimiter}省中心部门分管领导{tuple_delimiter}在特殊情况下，需请示省中心分管领导同意后方可先安排接待。{tuple_delimiter}3)
-("relationship"{tuple_delimiter}特殊情况{tuple_delimiter}补办手续{tuple_delimiter}在特殊情况下，接待完成后需及时补办审批手续。{tuple_delimiter}4)
-
+("entity"{tuple_delimiter}广东省财政厅{tuple_delimiter}机构/组织{tuple_delimiter}广东省财政厅是负责省级财政资金管理的政府机构，负责制定和发布2024年省级财政资金项目入库储备工作的相关通知。)
+{record_delimiter}
+("entity"{tuple_delimiter}广东省生态环境厅{tuple_delimiter}机构/组织{tuple_delimiter}广东省生态环境厅是负责生态环境保护工作的省级政府部门，其各处室和直属单位需围绕重点工作和一级项目清单申报专项资金项目。)
+{record_delimiter}
+("entity"{tuple_delimiter}财务与审计处{tuple_delimiter}机构/组织{tuple_delimiter}财务与审计处是广东省生态环境厅内设部门，负责组织项目预审、专家评审以及提交厅集体决策等环节的工作。)
+{record_delimiter}
+("entity"{tuple_delimiter}污染防治攻坚任务{tuple_delimiter}流程/活动{tuple_delimiter}污染防治攻坚任务是指为解决水、大气、土壤等污染问题而开展的一系列环境保护行动，具有显著的环境效益。)
+{record_delimiter}
+("entity"{tuple_delimiter}生态环境监测{tuple_delimiter}流程/活动{tuple_delimiter}生态环境监测是指通过技术手段对生态环境质量进行监测和评估的活动，为生态环境保护提供数据支持。)
+{record_delimiter}
+("entity"{tuple_delimiter}生态环境监管与督察{tuple_delimiter}流程/活动{tuple_delimiter}生态环境监管与督察是指对生态环境保护工作进行监督检查，确保政策和措施落实到位的活动。)
+{record_delimiter}
+("entity"{tuple_delimiter}2024年省级生态环境专项资金{tuple_delimiter}金额/数值{tuple_delimiter}2024年省级生态环境专项资金是用于支持生态环境保护项目的专项资金，需在6月底前纳入财政预算系统。)
+{record_delimiter}
+("entity"{tuple_delimiter}5月15日{tuple_delimiter}时间/编号{tuple_delimiter}5月15日是各处室和直属单位提交预审材料的截止日期，确保项目能够按时纳入预算系统。)
+{record_delimiter}
+("entity"{tuple_delimiter}分管厅领导{tuple_delimiter}角色/职位{tuple_delimiter}分管厅领导是负责审批各处室和直属单位申报项目的高级管理人员，确保项目符合要求并具备实施条件。)
+{record_delimiter}
+("entity"{tuple_delimiter}广东省生态环境厅省级生态环境监测资金项目管理办法{tuple_delimiter}文档/文件{tuple_delimiter}该办法是规范广东省生态环境厅省级生态环境监测资金项目管理的具体规定，明确了项目申报和审批流程。)
+{record_delimiter}
+("entity"{tuple_delimiter}广东省省级生态环境专项资金管理信息系统{tuple_delimiter}项目/类别{tuple_delimiter}该系统是用于管理省级生态环境专项资金项目的信息化平台，支持项目录入和预算管理等功能。)
+{record_delimiter}
+("entity"{tuple_delimiter}数字政府预算系统{tuple_delimiter}项目/类别{tuple_delimiter}数字政府预算系统是广东省财政厅开发的预算管理系统，用于支持省级财政资金的预算编制和执行。)
+{record_delimiter}
+("relationship"{tuple_delimiter}广东省财政厅{tuple_delimiter}广东省生态环境厅{tuple_delimiter}广东省财政厅发布的通知要求广东省生态环境厅按照规定时间完成2024年省级生态环境专项资金项目的入库储备工作，体现了上下级部门间的指导关系。{tuple_delimiter}9)
+{record_delimiter}
+("relationship"{tuple_delimiter}广东省生态环境厅{tuple_delimiter}财务与审计处{tuple_delimiter}广东省生态环境厅的财务与审计处负责组织项目预审、专家评审和提交集体决策等环节，体现了部门间的协作关系。{tuple_delimiter}8)
+{record_delimiter}
+("relationship"{tuple_delimiter}污染防治攻坚任务{tuple_delimiter}2024年省级生态环境专项资金{tuple_delimiter}污染防治攻坚任务是2024年省级生态环境专项资金重点支持的方向之一，体现了资金与任务的关联性。{tuple_delimiter}10)
+{record_delimiter}
+("relationship"{tuple_delimiter}生态环境监测{tuple_delimiter}广东省生态环境厅省级生态环境监测资金项目管理办法{tuple_delimiter}生态环境监测项目的申报和审批需按照《广东省生态环境厅省级生态环境监测资金项目管理办法》执行，体现了活动与规定的依存关系。{tuple_delimiter}9)
+{record_delimiter}
+("relationship"{tuple_delimiter}5月15日{tuple_delimiter}财务与审计处{tuple_delimiter}5月15日是各处室和直属单位向财务与审计处提交预审材料的截止日期，体现了时间对工作流程的约束性。{tuple_delimiter}8)
+{record_delimiter}
+("relationship"{tuple_delimiter}分管厅领导{tuple_delimiter}2024年省级生态环境专项资金{tuple_delimiter}分管厅领导负责审签申报项目清单和预算绩效目标申报表，确保项目符合专项资金支持要求，体现了领导对资金管理的监督作用。{tuple_delimiter}9)
+{record_delimiter}
+("relationship"{tuple_delimiter}广东省生态环境厅{tuple_delimiter}广东省省级生态环境专项资金管理信息系统{tuple_delimiter}广东省生态环境厅需将符合条件的项目录入广东省省级生态环境专项资金管理信息系统，体现了机构与系统的使用关系。{tuple_delimiter}7)
+{record_delimiter}
+("relationship"{tuple_delimiter}广东省财政厅{tuple_delimiter}数字政府预算系统{tuple_delimiter}广东省财政厅通过“数字政府”预算系统管理省级财政资金，体现了机构与系统的管理关系。{tuple_delimiter}8)
+{record_delimiter}
 {completion_delimiter}
-
 ######################
 -Real Data-
 ######################

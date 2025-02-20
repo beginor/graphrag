@@ -94,7 +94,7 @@ output:
 extract_graph:
   model_id: default_chat_model
   prompt: "prompts/extract_graph.txt"
-  entity_types: [人员类别,机构单位,职务级别,状态,依据]
+  entity_types: [机构/组织,角色/职位,文档/文件,项目/类别,流程/活动,金额/数值,时间/编号,地点/区域]
   max_gleanings: 1
 
 summarize_descriptions:
