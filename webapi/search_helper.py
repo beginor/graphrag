@@ -268,3 +268,56 @@ async def do_question_gen(root: str, question_history: list[str]) -> QuestionRes
         question_count=5
     )
     return question_result
+
+
+def get_local_search_context_data(root: str, query: str):
+    config = load_config(Path(root))
+    embedding_model = config.models['default_embedding_model']
+
+    text_embedding = OpenAIEmbedding(
+        model=embedding_model.model,
+        api_base=embedding_model.api_base,
+        api_key=embedding_model.api_key,
+        max_retries=embedding_model.max_retries,
+    )
+
+    entity_df = read_parquet(root + '/output/entities.parquet')
+    community_df = read_parquet(root + '/output/communities.parquet')
+    entities = read_indexer_entities(entity_df, community_df, COMMUNITY_LEVEL)
+
+    entity_embeddings = LanceDBVectorStore(
+        collection_name='default-entity-description'
+    )
+    entity_embeddings.connect(db_uri=root + '/output/lancedb')
+
+    text_unit_df = read_parquet(root + '/output/text_units.parquet')
+    text_units = read_indexer_text_units(text_unit_df)
+
+    community_report_df = read_parquet(root + '/output/community_reports.parquet')
+    community_reports = read_indexer_reports(
+        community_report_df,
+        community_df,
+        COMMUNITY_LEVEL,
+        dynamic_community_selection=True,
+        content_embedding_col='full_content_embedding',
+        config=config
+    )
+    relationship_df = read_parquet(root + '/output/relationships.parquet')
+    relationships = read_indexer_relationships(relationship_df)
+
+    token_encoder = tiktoken.get_encoding('cl100k_base')
+
+    context_builder = LocalSearchMixedContext(
+        entities=entities,
+        entity_text_embeddings=entity_embeddings,
+        text_embedder=text_embedding,
+        text_units=text_units,
+        community_reports=community_reports,
+        relationships=relationships,
+        covariates=None,
+        token_encoder=token_encoder,
+    )
+
+    context_data = context_builder.build_context(query)
+    chunks = context_data.context_chunks
+    return chunks

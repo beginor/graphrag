@@ -1,7 +1,7 @@
 import asyncio
 
 from .search_helper import do_global_search_streaming, do_local_search_streaming, \
-    do_local_search, do_global_search, do_question_gen
+    do_local_search, do_global_search, do_question_gen, get_local_search_context_data
 
 
 root = 'ragtest/laws'
@@ -54,10 +54,19 @@ async def test_question_gen():
     print(result.response)
 
 
+def test_get_local_search_context_data():
+    result = get_local_search_context_data(
+        root=root,
+        query='什么是水资源？'
+    )
+    print(result)
+
+
 if __name__ == '__main__':
     # asyncio.run(test_global_search_streaming())
     # asyncio.run(test_local_search_streaming())
     # asyncio.run(test_global_search())
     # asyncio.run(test_local_search())
     # asyncio.run(test_question_gen())
-    
+    test_get_local_search_context_data()
+

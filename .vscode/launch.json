@@ -34,6 +34,13 @@
 				"--config",
 				"<path_to_ragtest_root_demo>/settings.yaml",
 			]
-		}
+		},
+    {
+      "name": "webapi.test",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "webapi.test",
+      "cwd": "${workspaceFolder}",
+    }
 	]
 }
