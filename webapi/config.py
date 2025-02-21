@@ -36,7 +36,7 @@ class QuestionGenModel(BaseModel):
         description='模型名称',
         default='环境法规:局部搜索'
     )
-    query_history: list[dict] = Field(
+    query_history: list[str] = Field(
         description='query history',
         default=[]
     )
