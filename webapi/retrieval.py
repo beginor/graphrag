@@ -78,7 +78,7 @@ async def retrieval(req: RetrievalRequest) -> RetrievalResponse:
     record = RetrievalRecord(
         content=context_data,
         title=f'知识图谱中关于“{req.query}”的相关资料',
-        score=req.retrieval_setting.score_threshold,
+        score=0.99,
         metadata={}
     )
 
