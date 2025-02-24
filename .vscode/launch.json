@@ -41,6 +41,13 @@
       "request": "launch",
       "module": "webapi.test",
       "cwd": "${workspaceFolder}",
+    },
+    {
+      "name": "webapi.main",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "webapi.main",
+      "cwd": "${workspaceFolder}",
     }
 	]
 }
