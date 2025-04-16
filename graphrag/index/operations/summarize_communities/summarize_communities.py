@@ -8,7 +8,7 @@ from collections.abc import Callable
 
 import pandas as pd
 
-import graphrag.model.schemas as schemas
+import graphrag.data_model.schemas as schemas
 from graphrag.cache.pipeline_cache import PipelineCache
 from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.callbacks.workflow_callbacks import WorkflowCallbacks
@@ -21,7 +21,7 @@ from graphrag.index.operations.summarize_communities.typing import (
 from graphrag.index.operations.summarize_communities.utils import (
     get_levels,
 )
-from graphrag.index.run.derive_from_rows import derive_from_rows
+from graphrag.index.utils.derive_from_rows import derive_from_rows
 from graphrag.logger.progress import progress_ticker
 
 log = logging.getLogger(__name__)

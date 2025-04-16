@@ -5,8 +5,8 @@ import pandas as pd
 from pandas.testing import assert_series_equal
 
 import graphrag.config.defaults as defs
-from graphrag.index.context import PipelineRunContext
 from graphrag.index.run.utils import create_run_context
+from graphrag.index.typing.context import PipelineRunContext
 from graphrag.utils.storage import load_table_from_storage, write_table_to_storage
 
 pd.set_option("display.max_columns", None)
@@ -15,14 +15,14 @@ FAKE_API_KEY = "NOT_AN_API_KEY"
 
 DEFAULT_CHAT_MODEL_CONFIG = {
     "api_key": FAKE_API_KEY,
-    "type": defs.LLM_TYPE.value,
-    "model": defs.LLM_MODEL,
+    "type": defs.DEFAULT_CHAT_MODEL_TYPE.value,
+    "model": defs.DEFAULT_CHAT_MODEL,
 }
 
 DEFAULT_EMBEDDING_MODEL_CONFIG = {
     "api_key": FAKE_API_KEY,
-    "type": defs.EMBEDDING_TYPE.value,
-    "model": defs.EMBEDDING_MODEL,
+    "type": defs.DEFAULT_EMBEDDING_MODEL_TYPE.value,
+    "model": defs.DEFAULT_EMBEDDING_MODEL,
 }
 
 DEFAULT_MODEL_CONFIG = {
@@ -33,7 +33,7 @@ DEFAULT_MODEL_CONFIG = {
 
 async def create_test_context(storage: list[str] | None = None) -> PipelineRunContext:
     """Create a test context with tables loaded into storage storage."""
-    context = create_run_context(None, None, None)
+    context = create_run_context()
 
     # always set the input docs, but since our stored table is final, drop what wouldn't be in the original source input
     input = load_test_table("documents")

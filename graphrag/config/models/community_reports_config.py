@@ -7,35 +7,36 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field
 
-import graphrag.config.defaults as defs
+from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.models.language_model_config import LanguageModelConfig
 
 
 class CommunityReportsConfig(BaseModel):
     """Configuration section for community reports."""
 
+    model_id: str = Field(
+        description="The model ID to use for community reports.",
+        default=graphrag_config_defaults.community_reports.model_id,
+    )
     graph_prompt: str | None = Field(
         description="The community report extraction prompt to use for graph-based summarization.",
-        default=None,
+        default=graphrag_config_defaults.community_reports.graph_prompt,
     )
     text_prompt: str | None = Field(
         description="The community report extraction prompt to use for text-based summarization.",
-        default=None,
+        default=graphrag_config_defaults.community_reports.text_prompt,
     )
     max_length: int = Field(
         description="The community report maximum length in tokens.",
-        default=defs.COMMUNITY_REPORT_MAX_LENGTH,
+        default=graphrag_config_defaults.community_reports.max_length,
     )
     max_input_length: int = Field(
         description="The maximum input length in tokens to use when generating reports.",
-        default=defs.COMMUNITY_REPORT_MAX_INPUT_LENGTH,
+        default=graphrag_config_defaults.community_reports.max_input_length,
     )
     strategy: dict | None = Field(
-        description="The override strategy to use.", default=None
-    )
-    model_id: str = Field(
-        description="The model ID to use for community reports.",
-        default=defs.COMMUNITY_REPORT_MODEL_ID,
+        description="The override strategy to use.",
+        default=graphrag_config_defaults.community_reports.strategy,
     )
 
     def resolved_strategy(

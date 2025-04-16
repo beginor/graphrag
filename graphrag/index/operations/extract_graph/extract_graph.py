@@ -16,7 +16,7 @@ from graphrag.index.operations.extract_graph.typing import (
     EntityExtractStrategy,
     ExtractEntityStrategyType,
 )
-from graphrag.index.run.derive_from_rows import derive_from_rows
+from graphrag.index.utils.derive_from_rows import derive_from_rows
 
 log = logging.getLogger(__name__)
 
@@ -154,7 +154,11 @@ def _merge_entities(entity_dfs) -> pd.DataFrame:
     all_entities = pd.concat(entity_dfs, ignore_index=True)
     return (
         all_entities.groupby(["title", "type"], sort=False)
-        .agg(description=("description", list), text_unit_ids=("source_id", list))
+        .agg(
+            description=("description", list),
+            text_unit_ids=("source_id", list),
+            frequency=("source_id", "count"),
+        )
         .reset_index()
     )
 

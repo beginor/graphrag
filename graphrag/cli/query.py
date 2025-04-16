@@ -9,10 +9,11 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 import graphrag.api as api
+from graphrag.callbacks.noop_query_callbacks import NoopQueryCallbacks
 from graphrag.config.load_config import load_config
 from graphrag.config.models.graph_rag_config import GraphRagConfig
 from graphrag.logger.print_progress import PrintProgressLogger
-from graphrag.storage.factory import StorageFactory
+from graphrag.utils.api import create_storage_from_config
 from graphrag.utils.storage import load_table_from_storage, storage_has_table
 
 if TYPE_CHECKING:
@@ -90,8 +91,15 @@ def run_global_search(
 
         async def run_streaming_search():
             full_response = ""
-            context_data = None
-            get_context_data = True
+            context_data = {}
+
+            def on_context(context: Any) -> None:
+                nonlocal context_data
+                context_data = context
+
+            callbacks = NoopQueryCallbacks()
+            callbacks.on_context = on_context
+
             async for stream_chunk in api.global_search_streaming(
                 config=config,
                 entities=final_entities,
@@ -101,14 +109,11 @@ def run_global_search(
                 dynamic_community_selection=dynamic_community_selection,
                 response_type=response_type,
                 query=query,
+                callbacks=[callbacks],
             ):
-                if get_context_data:
-                    context_data = stream_chunk
-                    get_context_data = False
-                else:
-                    full_response += stream_chunk
-                    print(stream_chunk, end="")  # noqa: T201
-                    sys.stdout.flush()  # flush output buffer to display text immediately
+                full_response += stream_chunk
+                print(stream_chunk, end="")  # noqa: T201
+                sys.stdout.flush()  # flush output buffer to display text immediately
             print()  # noqa: T201
             return full_response, context_data
 
@@ -216,8 +221,15 @@ def run_local_search(
 
         async def run_streaming_search():
             full_response = ""
-            context_data = None
-            get_context_data = True
+            context_data = {}
+
+            def on_context(context: Any) -> None:
+                nonlocal context_data
+                context_data = context
+
+            callbacks = NoopQueryCallbacks()
+            callbacks.on_context = on_context
+
             async for stream_chunk in api.local_search_streaming(
                 config=config,
                 entities=final_entities,
@@ -229,14 +241,11 @@ def run_local_search(
                 community_level=community_level,
                 response_type=response_type,
                 query=query,
+                callbacks=[callbacks],
             ):
-                if get_context_data:
-                    context_data = stream_chunk
-                    get_context_data = False
-                else:
-                    full_response += stream_chunk
-                    print(stream_chunk, end="")  # noqa: T201
-                    sys.stdout.flush()  # flush output buffer to display text immediately
+                full_response += stream_chunk
+                print(stream_chunk, end="")  # noqa: T201
+                sys.stdout.flush()  # flush output buffer to display text immediately
             print()  # noqa: T201
             return full_response, context_data
 
@@ -336,8 +345,15 @@ def run_drift_search(
 
         async def run_streaming_search():
             full_response = ""
-            context_data = None
-            get_context_data = True
+            context_data = {}
+
+            def on_context(context: Any) -> None:
+                nonlocal context_data
+                context_data = context
+
+            callbacks = NoopQueryCallbacks()
+            callbacks.on_context = on_context
+
             async for stream_chunk in api.drift_search_streaming(
                 config=config,
                 entities=final_entities,
@@ -348,14 +364,11 @@ def run_drift_search(
                 community_level=community_level,
                 response_type=response_type,
                 query=query,
+                callbacks=[callbacks],
             ):
-                if get_context_data:
-                    context_data = stream_chunk
-                    get_context_data = False
-                else:
-                    full_response += stream_chunk
-                    print(stream_chunk, end="")  # noqa: T201
-                    sys.stdout.flush()  # flush output buffer to display text immediately
+                full_response += stream_chunk
+                print(stream_chunk, end="")  # noqa: T201
+                sys.stdout.flush()  # flush output buffer to display text immediately
             print()  # noqa: T201
             return full_response, context_data
 
@@ -378,7 +391,6 @@ def run_drift_search(
     logger.success(f"DRIFT Search Response:\n{response}")
     # NOTE: we return the response and context data here purely as a complete demonstration of the API.
     # External users should use the API directly to get the response and context data.
-    # TODO: Map/Reduce Drift Search answer to a single response
     return response, context_data
 
 
@@ -436,20 +448,23 @@ def run_basic_search(
 
         async def run_streaming_search():
             full_response = ""
-            context_data = None
-            get_context_data = True
+            context_data = {}
+
+            def on_context(context: Any) -> None:
+                nonlocal context_data
+                context_data = context
+
+            callbacks = NoopQueryCallbacks()
+            callbacks.on_context = on_context
+
             async for stream_chunk in api.basic_search_streaming(
                 config=config,
                 text_units=final_text_units,
                 query=query,
             ):
-                if get_context_data:
-                    context_data = stream_chunk
-                    get_context_data = False
-                else:
-                    full_response += stream_chunk
-                    print(stream_chunk, end="")  # noqa: T201
-                    sys.stdout.flush()  # flush output buffer to display text immediately
+                full_response += stream_chunk
+                print(stream_chunk, end="")  # noqa: T201
+                sys.stdout.flush()  # flush output buffer to display text immediately
             print()  # noqa: T201
             return full_response, context_data
 
@@ -482,10 +497,7 @@ def _resolve_output_files(
         dataframe_dict["num_indexes"] = len(config.outputs)
         dataframe_dict["index_names"] = config.outputs.keys()
         for output in config.outputs.values():
-            output_config = output.model_dump()
-            storage_obj = StorageFactory().create_storage(
-                storage_type=output_config["type"], kwargs=output_config
-            )
+            storage_obj = create_storage_from_config(output)
             for name in output_list:
                 if name not in dataframe_dict:
                     dataframe_dict[name] = []
@@ -512,10 +524,7 @@ def _resolve_output_files(
         return dataframe_dict
     # Loading output files for single-index search
     dataframe_dict["multi-index"] = False
-    output_config = config.output.model_dump()  # type: ignore
-    storage_obj = StorageFactory().create_storage(
-        storage_type=output_config["type"], kwargs=output_config
-    )
+    storage_obj = create_storage_from_config(config.output)
     for name in output_list:
         df_value = asyncio.run(load_table_from_storage(name=name, storage=storage_obj))
         dataframe_dict[name] = df_value

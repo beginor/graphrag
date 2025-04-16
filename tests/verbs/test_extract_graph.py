@@ -1,9 +1,8 @@
 # Copyright (c) 2024 Microsoft Corporation.
 # Licensed under the MIT License
 
-from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
 from graphrag.config.create_graphrag_config import create_graphrag_config
-from graphrag.config.enums import LLMType
+from graphrag.config.enums import ModelType
 from graphrag.index.workflows.extract_graph import (
     run_workflow,
 )
@@ -12,7 +11,6 @@ from graphrag.utils.storage import load_table_from_storage
 from .util import (
     DEFAULT_MODEL_CONFIG,
     create_test_context,
-    load_test_table,
 )
 
 MOCK_LLM_ENTITY_RESPONSES = [
@@ -37,9 +35,6 @@ MOCK_LLM_SUMMARIZATION_RESPONSES = [
 
 
 async def test_extract_graph():
-    nodes_expected = load_test_table("entities")
-    edges_expected = load_test_table("relationships")
-
     context = await create_test_context(
         storage=["text_units"],
     )
@@ -48,7 +43,7 @@ async def test_extract_graph():
     extract_claims_llm_settings = config.get_language_model_config(
         config.extract_graph.model_id
     ).model_dump()
-    extract_claims_llm_settings["type"] = LLMType.StaticResponse
+    extract_claims_llm_settings["type"] = ModelType.MockChat
     extract_claims_llm_settings["responses"] = MOCK_LLM_ENTITY_RESPONSES
     config.extract_graph.strategy = {
         "type": "graph_intelligence",
@@ -57,29 +52,20 @@ async def test_extract_graph():
     summarize_llm_settings = config.get_language_model_config(
         config.summarize_descriptions.model_id
     ).model_dump()
-    summarize_llm_settings["type"] = LLMType.StaticResponse
+    summarize_llm_settings["type"] = ModelType.MockChat
     summarize_llm_settings["responses"] = MOCK_LLM_SUMMARIZATION_RESPONSES
     config.summarize_descriptions.strategy = {
         "type": "graph_intelligence",
         "llm": summarize_llm_settings,
     }
 
-    await run_workflow(
-        config,
-        context,
-        NoopWorkflowCallbacks(),
-    )
+    await run_workflow(config, context)
 
     nodes_actual = await load_table_from_storage("entities", context.storage)
     edges_actual = await load_table_from_storage("relationships", context.storage)
 
-    assert len(nodes_actual.columns) == len(nodes_expected.columns), (
-        "Nodes dataframe columns differ"
-    )
-
-    assert len(edges_actual.columns) == len(edges_expected.columns), (
-        "Edges dataframe columns differ"
-    )
+    assert len(nodes_actual.columns) == 5
+    assert len(edges_actual.columns) == 5
 
     # TODO: with the combined verb we can't force summarization
     # this is because the mock responses always result in a single description, which is returned verbatim rather than summarized

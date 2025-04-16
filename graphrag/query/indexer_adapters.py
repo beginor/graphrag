@@ -12,13 +12,14 @@ from typing import cast
 import pandas as pd
 
 from graphrag.config.models.graph_rag_config import GraphRagConfig
-from graphrag.model.community import Community
-from graphrag.model.community_report import CommunityReport
-from graphrag.model.covariate import Covariate
-from graphrag.model.entity import Entity
-from graphrag.model.relationship import Relationship
-from graphrag.model.text_unit import TextUnit
-from graphrag.query.factory import get_text_embedder
+from graphrag.data_model.community import Community
+from graphrag.data_model.community_report import CommunityReport
+from graphrag.data_model.covariate import Covariate
+from graphrag.data_model.entity import Entity
+from graphrag.data_model.relationship import Relationship
+from graphrag.data_model.text_unit import TextUnit
+from graphrag.language_model.manager import ModelManager
+from graphrag.language_model.protocol.base import EmbeddingModel
 from graphrag.query.input.loaders.dfs import (
     read_communities,
     read_community_reports,
@@ -27,7 +28,6 @@ from graphrag.query.input.loaders.dfs import (
     read_relationships,
     read_text_units,
 )
-from graphrag.query.llm.oai.embedding import OpenAIEmbedding
 from graphrag.vector_stores.base import BaseVectorStore
 
 log = logging.getLogger(__name__)
@@ -106,7 +106,15 @@ def read_indexer_reports(
         content_embedding_col not in reports_df.columns
         or reports_df.loc[:, content_embedding_col].isna().any()
     ):
-        embedder = get_text_embedder(config)
+        # TODO: Find a way to retrieve the right embedding model id.
+        embedding_model_settings = config.get_language_model_config(
+            "default_embedding_model"
+        )
+        embedder = ModelManager().get_or_create_embedding_model(
+            name="default_embedding",
+            model_type=embedding_model_settings.type,
+            config=embedding_model_settings,
+        )
         reports_df = embed_community_reports(
             reports_df, embedder, embedding_col=content_embedding_col
         )
@@ -129,30 +137,29 @@ def read_indexer_report_embeddings(
 
 
 def read_indexer_entities(
-    final_entities: pd.DataFrame,
-    final_communities: pd.DataFrame,
+    entities: pd.DataFrame,
+    communities: pd.DataFrame,
     community_level: int | None,
 ) -> list[Entity]:
     """Read in the Entities from the raw indexing outputs."""
-    community_join = final_communities.explode("entity_ids").loc[
+    community_join = communities.explode("entity_ids").loc[
         :, ["community", "level", "entity_ids"]
     ]
-    nodes_df = final_entities.merge(
+    nodes_df = entities.merge(
         community_join, left_on="id", right_on="entity_ids", how="left"
     )
-    entities_df = final_entities
 
     if community_level is not None:
         nodes_df = _filter_under_community_level(nodes_df, community_level)
 
     nodes_df = nodes_df.loc[:, ["id", "community"]]
-
+    nodes_df["community"] = nodes_df["community"].fillna(-1)
     # group entities by id and degree and remove duplicated community IDs
     nodes_df = nodes_df.groupby(["id"]).agg({"community": set}).reset_index()
     nodes_df["community"] = nodes_df["community"].apply(
         lambda x: [str(int(i)) for i in x]
     )
-    final_df = nodes_df.merge(entities_df, on="id", how="inner").drop_duplicates(
+    final_df = nodes_df.merge(entities, on="id", how="inner").drop_duplicates(
         subset=["id"]
     )
     # read entity dataframe to knowledge model objects
@@ -211,7 +218,7 @@ def read_indexer_communities(
 
 def embed_community_reports(
     reports_df: pd.DataFrame,
-    embedder: OpenAIEmbedding,
+    embedder: EmbeddingModel,
     source_col: str = "full_content",
     embedding_col: str = "full_content_embedding",
 ) -> pd.DataFrame:

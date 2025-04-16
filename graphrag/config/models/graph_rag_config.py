@@ -3,12 +3,14 @@
 
 """Parameterization settings for the default configuration."""
 
+from dataclasses import asdict
 from pathlib import Path
 
 from devtools import pformat
 from pydantic import BaseModel, Field, model_validator
 
 import graphrag.config.defaults as defs
+from graphrag.config.defaults import graphrag_config_defaults
 from graphrag.config.errors import LanguageModelConfigMissingError
 from graphrag.config.models.basic_search_config import BasicSearchConfig
 from graphrag.config.models.cache_config import CacheConfig
@@ -49,7 +51,8 @@ class GraphRagConfig(BaseModel):
         return self.model_dump_json(indent=4)
 
     root_dir: str = Field(
-        description="The root directory for the configuration.", default=""
+        description="The root directory for the configuration.",
+        default=graphrag_config_defaults.root_dir,
     )
 
     def _validate_root_dir(self) -> None:
@@ -65,7 +68,7 @@ class GraphRagConfig(BaseModel):
 
     models: dict[str, LanguageModelConfig] = Field(
         description="Available language model configurations.",
-        default={},
+        default=graphrag_config_defaults.models,
     )
 
     def _validate_models(self) -> None:
@@ -86,20 +89,24 @@ class GraphRagConfig(BaseModel):
         if defs.DEFAULT_EMBEDDING_MODEL_ID not in self.models:
             raise LanguageModelConfigMissingError(defs.DEFAULT_EMBEDDING_MODEL_ID)
 
-    reporting: ReportingConfig = Field(
-        description="The reporting configuration.", default=ReportingConfig()
+    input: InputConfig = Field(
+        description="The input configuration.", default=InputConfig()
     )
-    """The reporting configuration."""
+    """The input configuration."""
 
-    def _validate_reporting_base_dir(self) -> None:
-        """Validate the reporting base directory."""
-        if self.reporting.type == defs.ReportingType.file:
-            if self.reporting.base_dir.strip() == "":
-                msg = "Reporting base directory is required for file reporting. Please rerun `graphrag init` and set the reporting configuration."
-                raise ValueError(msg)
-            self.reporting.base_dir = str(
-                (Path(self.root_dir) / self.reporting.base_dir).resolve()
-            )
+    def _validate_input_pattern(self) -> None:
+        """Validate the input file pattern based on the specified type."""
+        if len(self.input.file_pattern) == 0:
+            if self.input.file_type == defs.InputFileType.text:
+                self.input.file_pattern = ".*\\.txt$"
+            else:
+                self.input.file_pattern = f".*\\.{self.input.file_type.value}$"
+
+    chunks: ChunkingConfig = Field(
+        description="The chunking configuration to use.",
+        default=ChunkingConfig(),
+    )
+    """The chunking configuration to use."""
 
     output: OutputConfig = Field(
         description="The output configuration.",
@@ -119,7 +126,7 @@ class GraphRagConfig(BaseModel):
 
     outputs: dict[str, OutputConfig] | None = Field(
         description="A list of output configurations used for multi-index query.",
-        default=None,
+        default=graphrag_config_defaults.outputs,
     )
 
     def _validate_multi_output_base_dirs(self) -> None:
@@ -137,8 +144,8 @@ class GraphRagConfig(BaseModel):
     update_index_output: OutputConfig = Field(
         description="The output configuration for the updated index.",
         default=OutputConfig(
-            type=defs.OUTPUT_TYPE,
-            base_dir=defs.UPDATE_OUTPUT_BASE_DIR,
+            type=graphrag_config_defaults.update_index_output.type,
+            base_dir=graphrag_config_defaults.update_index_output.base_dir,
         ),
     )
     """The output configuration for the updated index."""
@@ -158,16 +165,35 @@ class GraphRagConfig(BaseModel):
     )
     """The cache configuration."""
 
-    input: InputConfig = Field(
-        description="The input configuration.", default=InputConfig()
+    reporting: ReportingConfig = Field(
+        description="The reporting configuration.", default=ReportingConfig()
     )
-    """The input configuration."""
+    """The reporting configuration."""
 
-    embed_graph: EmbedGraphConfig = Field(
-        description="Graph embedding configuration.",
-        default=EmbedGraphConfig(),
+    def _validate_reporting_base_dir(self) -> None:
+        """Validate the reporting base directory."""
+        if self.reporting.type == defs.ReportingType.file:
+            if self.reporting.base_dir.strip() == "":
+                msg = "Reporting base directory is required for file reporting. Please rerun `graphrag init` and set the reporting configuration."
+                raise ValueError(msg)
+            self.reporting.base_dir = str(
+                (Path(self.root_dir) / self.reporting.base_dir).resolve()
+            )
+
+    vector_store: dict[str, VectorStoreConfig] = Field(
+        description="The vector store configuration.",
+        default_factory=lambda: {
+            k: VectorStoreConfig(**asdict(v))
+            for k, v in graphrag_config_defaults.vector_store.items()
+        },
     )
-    """Graph Embedding configuration."""
+    """The vector store configuration."""
+
+    workflows: list[str] | None = Field(
+        description="List of workflows to run, in execution order. This always overrides any built-in workflow methods.",
+        default=graphrag_config_defaults.workflows,
+    )
+    """List of workflows to run, in execution order."""
 
     embed_text: TextEmbeddingConfig = Field(
         description="Text embedding configuration.",
@@ -175,29 +201,11 @@ class GraphRagConfig(BaseModel):
     )
     """Text embedding configuration."""
 
-    chunks: ChunkingConfig = Field(
-        description="The chunking configuration to use.",
-        default=ChunkingConfig(),
-    )
-    """The chunking configuration to use."""
-
-    snapshots: SnapshotsConfig = Field(
-        description="The snapshots configuration to use.",
-        default=SnapshotsConfig(),
-    )
-    """The snapshots configuration to use."""
-
     extract_graph: ExtractGraphConfig = Field(
         description="The entity extraction configuration to use.",
         default=ExtractGraphConfig(),
     )
     """The entity extraction configuration to use."""
-
-    extract_graph_nlp: ExtractGraphNLPConfig = Field(
-        description="The NLP-based graph extraction configuration to use.",
-        default=ExtractGraphNLPConfig(),
-    )
-    """The NLP-based graph extraction configuration to use."""
 
     summarize_descriptions: SummarizeDescriptionsConfig = Field(
         description="The description summarization configuration to use.",
@@ -205,19 +213,11 @@ class GraphRagConfig(BaseModel):
     )
     """The description summarization configuration to use."""
 
-    community_reports: CommunityReportsConfig = Field(
-        description="The community reports configuration to use.",
-        default=CommunityReportsConfig(),
+    extract_graph_nlp: ExtractGraphNLPConfig = Field(
+        description="The NLP-based graph extraction configuration to use.",
+        default=ExtractGraphNLPConfig(),
     )
-    """The community reports configuration to use."""
-
-    extract_claims: ClaimExtractionConfig = Field(
-        description="The claim extraction configuration to use.",
-        default=ClaimExtractionConfig(
-            enabled=defs.EXTRACT_CLAIMS_ENABLED,
-        ),
-    )
-    """The claim extraction configuration to use."""
+    """The NLP-based graph extraction configuration to use."""
 
     prune_graph: PruneGraphConfig = Field(
         description="The graph pruning configuration to use.",
@@ -231,10 +231,36 @@ class GraphRagConfig(BaseModel):
     )
     """The cluster graph configuration to use."""
 
+    extract_claims: ClaimExtractionConfig = Field(
+        description="The claim extraction configuration to use.",
+        default=ClaimExtractionConfig(
+            enabled=graphrag_config_defaults.extract_claims.enabled,
+        ),
+    )
+    """The claim extraction configuration to use."""
+
+    community_reports: CommunityReportsConfig = Field(
+        description="The community reports configuration to use.",
+        default=CommunityReportsConfig(),
+    )
+    """The community reports configuration to use."""
+
+    embed_graph: EmbedGraphConfig = Field(
+        description="Graph embedding configuration.",
+        default=EmbedGraphConfig(),
+    )
+    """Graph Embedding configuration."""
+
     umap: UmapConfig = Field(
         description="The UMAP configuration to use.", default=UmapConfig()
     )
     """The UMAP configuration to use."""
+
+    snapshots: SnapshotsConfig = Field(
+        description="The snapshots configuration to use.",
+        default=SnapshotsConfig(),
+    )
+    """The snapshots configuration to use."""
 
     local_search: LocalSearchConfig = Field(
         description="The local search configuration.", default=LocalSearchConfig()
@@ -255,18 +281,6 @@ class GraphRagConfig(BaseModel):
         description="The basic search configuration.", default=BasicSearchConfig()
     )
     """The basic search configuration."""
-
-    vector_store: dict[str, VectorStoreConfig] = Field(
-        description="The vector store configuration.",
-        default={defs.VECTOR_STORE_DEFAULT_ID: VectorStoreConfig()},
-    )
-    """The vector store configuration."""
-
-    workflows: list[str] | None = Field(
-        description="List of workflows to run, in execution order. This always overrides any built-in workflow methods.",
-        default=None,
-    )
-    """List of workflows to run, in execution order."""
 
     def _validate_vector_store_db_uri(self) -> None:
         """Validate the vector store configuration."""
@@ -330,6 +344,7 @@ class GraphRagConfig(BaseModel):
         """Validate the model configuration."""
         self._validate_root_dir()
         self._validate_models()
+        self._validate_input_pattern()
         self._validate_reporting_base_dir()
         self._validate_output_base_dir()
         self._validate_multi_output_base_dirs()
